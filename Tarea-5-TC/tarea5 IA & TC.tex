@@ -1,0 +1,772 @@
+\documentclass{article}
+\usepackage{standalone}
+\usepackage{import}
+\usepackage[margin=1in,headheight=60pt,headsep=0.1in]{geometry}
+%\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{automata, positioning, arrows}
+
+%\usepackage[framemethod=TikZ]{mdframed}
+\usepackage{fancyhdr}
+\usepackage{hw-shortcuts}
+\usepackage[spanish]{babel}
+% ------------- %
+% HEADER/FOOTER %
+% ------------- %
+\setlength\parindent{0pt}
+\setlength\headheight{30pt}
+\headsep=0.25in
+\lhead{\textbf{\coursetitle{}}}
+\rhead{\textbf{\course}}
+
+
+% ----------------- %
+% BOXED EXPRESSIONS %
+% ----------------- %
+\newenvironment{defn}[1][]{
+\ifstrempty{#1}
+    {} % Don't add header
+    {\mdfsetup{
+        frametitle={
+            \tikz[baseline=(current bounding box.east),outer sep=0pt]
+            \node[anchor=east,rectangle,fill=blue!30]
+            {Definición #1};}}
+    } % Header
+    \mdfsetup{
+        innertopmargin=10pt,linecolor=blue!30,
+        linewidth=2pt,topline=true,
+        frametitleaboveskip=\dimexpr-\ht\strutbox\relax
+    }
+    \begin{mdframed}
+}{
+    \end{mdframed}
+}
+
+\newenvironment{question}[1][]{
+\ifstrempty{#1}
+    {}
+    {\mdfsetup{
+        frametitle={
+            \tikz[baseline=(current bounding box.east),outer sep=0pt]
+            \node[anchor=east,rectangle,fill=red!30]
+            {Problema #1};}}
+    }
+    \mdfsetup{
+        innertopmargin=10pt,linecolor=red!30,
+        linewidth=2pt,topline=true,
+        frametitleaboveskip=\dimexpr - \ht\strutbox\relax
+    }
+    \begin{mdframed}
+}{
+    \end{mdframed}
+}
+
+\newenvironment{lem}[1][]{
+\ifstrempty{#1}
+    {}
+    {\mdfsetup{
+        frametitle={
+            \tikz[baseline=(current bounding box.east),outer sep=0pt]
+            \node[anchor=east,rectangle,fill=green!30]
+            {Lema #1};}}
+    }\newcommand{\coNP}{\ensuremath{\mathsf{coNP}}}
+
+    % Commonly-used reductions add semantic clarity
+    \newcommand{\CookReducesTo}{\ensuremath{\leq^P_T}}
+    \newcommand{\KarpReducesTo}{\ensuremath{\leq^P_m}}
+    \mdfsetup{
+        innertopmargin=10pt,linecolor=green!30,
+        linewidth=2pt,topline=true,
+        frametitleaboveskip=\dimexpr - \ht\strutbox\relax
+    }
+    \begin{mdframed}
+}{
+    \end{mdframed}
+}
+%-------%
+% FONTS %
+%-------%
+
+% Skip lines and don't indent
+\setlength{\parindent}{0em}
+\setlength{\parskip}{1em}
+
+% Import math fonts and symbols
+\RequirePackage{amsfonts}
+\RequirePackage{amsmath,amsthm,amssymb}
+
+% Palatino typeface -- includes (old-style) text figures
+\RequirePackage[osf]{mathpazo}
+
+% Hipervínculos
+\hypersetup{
+    colorlinks=true,
+    linkcolor=RobRed,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdfauthor={R. Vasquez},
+    pdftitle={Tarea 5},
+    citecolor=RobRed
+}
+
+
+
+% ---------- %
+% PARAMETERS %
+% ---------- %
+\newcommand\course{IA \& TC}
+\newcommand\coursetitle{Tarea 5}
+\newcommand\prof{Jesús Rodríguez Viorato}
+\newcommand\semester{Agosto-Diciembre 2021}
+\newcommand\name{Roberto Vásquez Martínez}
+
+% ----------------- %
+% Automata node set %
+% ----------------- %
+\tikzset{node distance=2.0cm, % Minimum distance between two nodes. Change if necessary.
+every state/.style={ % Sets the properties for each state
+scale=0.65,
+semithick,
+fill=gray!10},
+initial text={}, % No label on start arrow
+double distance=2pt, % Adjust appearance of accept states
+every edge/.style={ % Sets the properties for each transition
+draw,
+->,>=stealth, % Makes edges directed with bold arrowheads
+auto,
+semithick}}
+
+%-------------------------------%
+% Shortcuts for Turing Machines %
+%-------------------------------%
+\newcommand\blank{\text{\textvisiblespace\hspace{1pt}}}
+
+%---------------------------%
+% Bibliografía con BibLaTeX %
+%---------------------------%
+\usepackage[backend=biber,style=apa]{biblatex}
+\usepackage{csquotes}
+% Usamos el formato APA
+\DeclareLanguageMapping{spanish}{spanish-apa}
+\urlstyle{same}
+% Cargamos la fuente con los datos bibliográficos
+\addbibresource{lib.bib}
+
+%----------%
+% DOCUMENT %
+%----------%
+
+\begin{document}
+\begin{titlepage}
+    \centering
+    \vspace*{\fill}
+    \textsc{\LARGE{\coursetitle}}\\[0.3cm]
+    \textsc{\Large{Profesor: \prof}}\\[0.3cm]
+    \textsc{\large{\course}}\\[0.3cm]
+    \textsc{\large{\semester}}\\
+    \vspace*{\fill}
+    \textsc{\name}
+\end{titlepage}
+\pagebreak
+\setcounter{page}{1}
+
+\pagestyle{fancy}
+
+%%%%%%%%%%%%%%
+% Problema 1 %
+%%%%%%%%%%%%%%
+\begin{question}[1]
+    Sea 
+    \[
+        ALL_{DFA}=\cbr{\innp{A}\ |\ A\text{ es  DFA y }L(A)=\Sigma^{\ast}}
+    \]
+
+    Muestra que $ALL_{DFA}$ es decidible.
+\end{question}
+
+\Proof 
+Construiremos una máquina de Turing que decida $ALL_{DFA}$. 
+
+En primer lugar recordemos que 
+\[
+    E_{DFA}=\cbr{\innp{A}\ |\ A\text{ es DFA y }L(A)=\emptyset},
+\]
+
+es decidible y sea $T_1$ una máquina de Turing que decide este lenguaje. 
+
+Además notamos que dado un DFA A podemos construir $B$ tal que 
+\[
+    L(B)=L(A)^c,
+\]
+
+primero construyendo un DFA que acepte $\Sigma^*$ y luego usando el autómata producto para hallar el autómata B que reconozca $L(A)^c=\Sigma^{\ast}\backslash L(A)$.
+
+Sea $T_2$ la máquina de Turing definida de la siguiente forma: 
+
+$T_2=$``input $\innp{A}$ con A un DFA
+\begin{enumerate}
+    \item Construimos $B$ tal que $L(B)=L(A)^c$.
+    \item Simulamos $T_1$ con input $\innp{B}$.
+    \item Aceptamos si $T_1$ acepta en el paso 2. Rechazamos si $T_1$ rechaza en el paso 2.''
+\end{enumerate}
+
+Como $E_{DFA}$ es dedicible por $T_1$ entonces $T_2$ siempre se detiene, por lo que $L(T_2)$ es decidible, además $T_2$ acepta $A$ sólo si $T_1$ acepta $B$, es decir, si $L(B)=\emptyset$ que equivale a que $L(A)=\Sigma^{\ast}$.
+
+Concluimos que 
+\[
+    ALL_{DFA}=L(T_2),
+\]
+
+y $ALL_{DFA}$ es decidible. \qed
+
+\clearpage
+%%%%%%%%%%%%%%
+% Problema 2 %
+%%%%%%%%%%%%%%
+\begin{question}[2]
+    Sea 
+    \[
+        A=\cbr{\innp{R,S}\ |\ R\text{ y }S\text{ son expresiones regulares y }L(R)\subseteq L(S)}.
+    \]
+
+    Demuestra que $A$ es decidible.
+\end{question}
+
+\Proof
+De manera análoga al problema anterior sea $T_1$ una máquina de Turing que decide $E_{DFA}$. 
+
+Observamos que 
+\begin{equation}
+    \label{fact sets}
+    L(R)\subseteq L(S)\ssi L(S)^c\cap L(R)=\emptyset.
+\end{equation}
+
+Definimos la siguiente máquina de Turing:
+
+$T_2$=``input $\innp{R,S}$ con R y S expresiones regulares
+\begin{enumerate}
+    \item Con el argumento del autómata producto construimos un DFA B tal que
+    \[
+        L(B)=L(S)^c\cap L(R)
+    \]
+    \item Simulamos $T_1$ con input $\innp{B}$.
+    \item Aceptamos si $T_1$ acepta en el paso 2. Rechazamos si $T_1$ rechaza en el paso 2.'' 
+\end{enumerate}
+
+Como $T_1$ decide $E_{DFA}$ el algoritmo anterior siempre para por lo que $L(T_2)$ es decidible.
+
+Ahora notamos que $\innp{R,S}$ es aceptada por $T_2$ si $\innp{B}$ es aceptada por $T_1$, es decir, si 
+\[
+    L(S)^c\cap L(R)=\emptyset,
+\]
+
+y por \eqref{fact sets} esto equivale a que 
+
+\[
+    L(R)\subseteq L(S).
+\]
+
+Por lo tanto $A=L(T_2)$ y así $A$ es decidible. \qed
+
+\clearpage
+%%%%%%%%%%%%%%
+% Problema 3 %
+%%%%%%%%%%%%%%
+\begin{question}[3]
+    Probar que $EQ_{DFA}$ es decidible ejecutando los dos DFA's en todas las cadenas de cierto tamaño. Calcular un tamaño que funcione.
+\end{question}
+
+\Proof
+Consideremos $A=(P,\Sigma,\delta,p_0,F)$ y $B=(Q,\Sigma,\gamma,q_0,G)$ dos DFA's. 
+
+Sea $n=\abs{P}$ y $m=\abs{Q}$, denotemos por 
+\[
+    SA_{nm}=\cbr{\omega\in\Sigma^{\ast}\ |\ \delta^{\ast}(p_0,\omega)\in F\y \abs{\omega}\leq nm},
+\]
+
+y
+\[
+    SB_{nm}=\cbr{\omega\in\Sigma^{\ast}\ |\ \gamma^{\ast}(q_0,\omega)\in G\y \abs{\omega}\leq nm},
+\]
+
+a las cadenas de caracteres aceptadas por $A$ y $B$, respectivamente y que tienen longitud a lo más $nm$.
+
+Vamos a probar  que 
+\begin{equation}
+    \label{equal LA and LB}
+    L(A)=L(B)\ssi SA_{nm}=SB_{nm}
+\end{equation}
+
+Si $L(A)=L(B)$ es claro que $SA_{nm}=SB_{nm}$ pues los autómatas A y B aceptan las mismas cadenas de caracteres.
+
+Ahora para demostrar la otra dirección procederemos por contrapositiva. Supongamos que $L(A)\neq L(B)$ queremos probar que 
+\[
+    SA_{nm}\Delta SB_{nm}\neq \emptyset.
+\]
+
+Como $L(A)\neq L(B)$ entonces $L(A)\Delta L(B)\neq \emptyset$. Por el principio del Buen Orden existe $t\in L(A)\Delta L(B)$ tal que
+\begin{equation}
+    \label{minimum length}
+    \abs{t}=\min\cbr{\abs{\omega}\ |\ \omega\in L(A)\Delta L(B)}.
+\end{equation}
+
+Si $\abs{t}\leq nm$ entonces $t\in SA_{nm}\Delta SB_{nm}$ y hemos terminado. 
+
+Ahora supongamos que $k:=\abs{t}>nm$. 
+
+Sea 
+\[
+    p_0,p_1,\dots,p_k\text{ los estados que se visitan en A al leer }t,
+\]
+y 
+
+\[
+    q_0,q_1,\dots,q_k\text{ los estados que se visitan en B al leer }t.
+\]
+
+Observamos que 
+\[
+  \abs{\cbr{(p_i,q_i)\ |\ i=0,1,\dots,k}}=k+1>nm,  
+\]
+
+y como $\abs{P}=n$ y $\abs{Q}=m$ entonces solo hay $nm$ parejas ordenadas $(p,q)$ distintas con $p\in P$ y $q\in Q$.
+
+Por el principio de las Casillas existe $i,j\in \cbr{0,1,\dots,k}$, que sin pérdida de generalidad podemos suponer $i<j$, tal que 
+\[
+    (p_i,q_i)=(p_j,q_j).
+\]
+
+Con esto podemos recuperar una cadena $t'\in \Sigma^*$ que ignore las transiciones por los estados $p_{i+1}$ a $p_{j-1}$ en $A$ y las transiciones por los estados $q_{i+1}$ a $q_{j-1}$ en B.
+
+Por lo tanto al leer la cadena $t'$ se pasa por los estados 
+\[
+    p_0,\dots,p_i,p_{j+1},\dots,p_k\text{ en A},
+\]
+
+y
+\[
+    q_0,\dots,q_i,q_{j+1},\dots,q_k\text{ en B},
+\]
+
+y $t'$ es aceptada o rechazada como lo es $t$ en $A$ y en $B$, es decir, $t'\in L(A)\Delta L(B)$, pero 
+\[
+    \abs{t'}=k+i-j<k=\abs{t},
+\]
+
+que es una contradicción a la definición de $t$ en \eqref{minimum length}.
+
+Por lo tanto $\abs{t}\leq nm$ y se cumple $SA_{nm}\Delta SB_{nm}\neq \emptyset $ si $L(A)\neq L(B)$ y así tenemos el hecho en \eqref{equal LA and LB}.
+
+Por lo tanto para decidir si $L(A)=L(B)$ basta con simular $A$ y $B$ en todas las cadenas $\omega\in\Sigma^*$ con $\abs{\omega}\leq nm$.
+
+La máquina de Turing que simulará este algoritmo es:
+
+$T=$`` input $\innp{A,B}$ con $A$ y $B$ DFA's 
+\begin{enumerate}
+    \item Contar el número de estados de $A$ y $B$, que serán $n$ y $m$.
+    \item Iterar sobre todas las cadenas $\omega\in \Sigma^{\ast}$ con $\abs{\omega}\leq nm$.
+    \begin{itemize}
+        \item Simular $A$ con entrada $\omega$.
+        \item Simular $B$ con entrada $\omega$.
+    \end{itemize}
+    \item Si el resultado de $A$ y $B$ es diferente rechazar, de lo contrario volver el paso 2.
+    \item Si se termina el ciclo en el paso 2 significa que $SA_{nm}=SB_{nm}$ entonces aceptar $\innp{A,B}$.''
+\end{enumerate}
+
+Notamos que $T$ siempre se detiene porque existe un número finito de cadenas de longitud a lo más $nm$, por lo que $L(T)$ es decidible, además $T$ acepta $\innp{A,B}$ sólo si llega al paso $4$ y esto pasa si $SA_{nm}=SB_{nm}$ que por \eqref{equal LA and LB} equivale a $L(A)=L(B)$, por lo que 
+\[
+    L(T)=EQ_{DFA},
+\]
+
+de lo que concluimos que $EQ_{DFA}$ es decidible y el tamaño apropiado de las cadenas en las que basta simular los autómatas es $nm$. \qed
+
+\clearpage
+%%%%%%%%%%%%%%
+% Problema 4 %
+%%%%%%%%%%%%%%
+\begin{question}[4]
+    Probar que la clase de lenguajes decidibles no es cerrada bajo homomorfismos.
+\end{question}
+
+\Proof 
+Recordemos que 
+\[
+    HALT_{TM}=\cbr{\innp{M,\omega}\ |\ M\text{ es TM y se detiene al leer} \omega},
+\]
+
+es indecidible por el \colemph{Teorema 5.1} de \cite{sipser}).
+
+Usaremos la definición de función de condificación que aparece en la \colemph{Definición 7.33} de \cite{martin}, esto nos permite codificar $\innp{M,\omega}$ con elementos de $\{0,1\}^{\ast}$.
+
+Lo anterior nos permite definir 
+\[
+    D=\cbr{xy\ |\ x\in \{0,1\}^*,\ x=\innp{M,\omega},\ y\in \{a,b\}^*\text{ codifica a un natural } n\text{ tal que } M\text{ se detiene al leer }\omega \text{ en }n\text{ pasos}},
+\]
+
+entonces $D$ codifica en un lenguaje la acción de $M$ con input $\omega$ que se para en $n$ pasos para cada $n\in\N$.
+
+Notamos que $D$ es decidible ya que para cada $n\in\N$, $n$ codificado por una cadena $y$ en $\{a,b\}^*$, se simula $M$ con entrada $\omega$ y la máquina se detiene en a lo más $n$ pasos. Si se llegó al estado aceptor o de rechazo durante esos $n$ pasos la correspondiente máquina aceptará $xy$ sino lo rechazará.
+
+Sea $h:\{0,1,a,b\}\rightarrow \{0,1,\varepsilon\}$ definida por 
+\begin{align*}
+    h(0)=&0\\ 
+    h(1)=&1\\ 
+    h(a)=&h(b)=\varepsilon.
+\end{align*}
+
+Como $h$ es una función en los caracteres entonces es un homomorfismo que se extiende como en el \colemph{Problema 1.66} de \cite{sipser} a cadenas de caracteres. 
+
+Aplicamos el homomorfismo a lenguajes como en el \colemph{Problema 1.66} de \cite{sipser} y obtenemos que 
+\[
+    h(D)=\cbr{h(xy)\ |\ xy\in D}
+\]
+
+Si $xy\in D$ entonces $x$ codifica $\innp{M,\omega}$ tal que $M$ se para con entrada $\omega$ y lo hace en $n$ pasos para alguna $n\in\N$, donde el número de pasos necesarios para detenerse es la parte codificada por $y$. 
+
+Como $h(xy)=x$ entonces al aplicar $h$ obtenemos $x$ que codifican $\innp{M,\omega}$ tal que $M$ se detiene al leer $\omega$, es decir,
+\[
+    h(D)=\cbr{x\ |\ x\in \{0,1\}^{\ast}, x=\innp{M,\omega}\text{ tal que }M\text{ se detiene al leer }\omega}=HALT_{TM},
+\]
+
+y al ser $HALT_{TM}$ indecidible se tiene que $h(D)$ es indecidible. 
+
+Por lo tanto los lenguajes decidibles no son cerrados bajo homomorfismos. \qed
+
+\clearpage
+%%%%%%%%%%%%%%
+% Problema 5 %
+%%%%%%%%%%%%%%
+\begin{question}[5]
+    Encuentra un emparejamiento en la siguiente colección de dominos del PCP 
+    \[
+        \cbr*{\cbk*{\frac{ab}{abab}},\cbk*{\frac{b}{a}},\cbk*{\frac{aba}{b}},\cbk*{\frac{aa}{a}}}
+    \]
+\end{question}
+
+\Proof 
+La colección de dominos que proporciona un emparejamiento es la siguiente
+\[
+    \cbr*{\cbk*{\frac{ab}{abab}},\cbk*{\frac{ab}{abab}},\cbk*{\frac{aba}{b}},\cbk*{\frac{b}{a}},\cbk*{\frac{b}{a}},\cbk*{\frac{aa}{a}},\cbk*{\frac{aa}{a}}},
+\]
+
+y la cadena de caracteres que está arriba y abajo en el emparejamiento es 
+\[
+    ababababbaaaa \qed
+\]
+
+\clearpage
+%%%%%%%%%%%%%%
+% Problema 6 %
+%%%%%%%%%%%%%%
+\begin{question}[6]
+    Sea 
+    \[
+        T=\cbr{\innp{M}\ |\ M\text{ es TM que acepta }\omega^R\text{ si acepta }\omega}.
+    \]
+    Demuestra que $T$ es indecidible. 
+\end{question}
+
+\Proof 
+Sea $\Sigma$ es el alfabeto de las máquinas de Turing, si $\abs{\Sigma}=1$, entonces para toda máquina de Turing $M$ con dicho alfabeto se cumple 
+\[
+    L(M)=L(M)^R,
+\]
+
+por lo que en este caso tenemos que 
+\[
+    T=\cbr{\innp{M}\ |\ M\text{ es TM}}
+\]
+
+es decidible por la forma es que se considera la codificación $\innp{M}$\parencite[Ver][pp. 185 ]{sipser}.
+
+Por lo tanto consideramos $\abs{\Sigma}\geq 2$, sean $a,b\in\Sigma$ tal que $a\neq b$.
+
+Por otro lado, decimos que un lenguaje $L\subseteq \Sigma^*$ es cerrado bajo la operación reversa si para todo $\omega\in L$ se tiene $\omega^R\in L$.
+
+Por el \colemph{Teorema 4.22} de \cite{sipser} para ver que $T$ es indecidible basta ver que $T^c$, que es 
+\[
+    T^c=\cbr{\innp{M}\ |\ \innp{M}\text{ no condifica a una TM o es una TM tal que }  L(M) \text{ no es cerrado bajo la operación reversa}},
+\]
+
+es indecidible.  
+
+Para probar que $T^c$ es indecidible procederemos por contradicción. Supongamos que $T^c$ es decidible y sea $D_{T^c}$ una TM que lo decide. 
+
+En primer lugar, para $\omega\in\Sigma^*$ y $M$ TM construimos la  TM que denotaremos por $M'(M,\omega)$ y definimos de la siguiente forma
+
+
+$M':=M'(M,\omega)=$`` input $x$ con $x\in\Sigma^{\ast}$ 
+\begin{enumerate}
+    \item Si $x=ab$
+    \begin{itemize}
+        \item Simular $M$ en $\omega$
+        \item Si $M$ acepta $\omega$, aceptar.
+        \item Si $M$ rechaza $\omega$, rechazar.
+    \end{itemize}
+    \item Si $x\neq ab$
+    \begin{itemize}
+        \item Rechazar''
+    \end{itemize}
+\end{enumerate}
+
+Vamos a probar que 
+\begin{equation}
+    \label{reduction reverse}
+    \innp{M,\omega}\in A_{TM}\ssi \innp{M'}\in T^c.
+\end{equation}
+
+Si $\innp{M,\omega}\in A_{TM}$ entonces $\omega$ es aceptado por $M$, luego $L(M')=\{ab\}$, por lo que $M'$ es una TM y 
+\[
+    ba=(ab)^R\not\in L(M'),
+\]
+
+por lo que $\innp{M'}\in T^c$.
+
+Para probar la otra dirección procedemos por contrapositiva. Si $\innp{M,\omega}\not\in A_{TM}$ entonces $\omega$ es rechazada por $M$ o bien $M$ itera indefinidamente al ingresar $\omega$, en cualquier caso $L(M')=\emptyset$, por lo que $\innp{M'}\not\in T^c$,
+se tiene así que se cumple la proposición en \eqref{reduction reverse}.
+
+En este punto tenemos $D_{T^c}$ la TM que decide $T^c$, construimos a partir de esta máquina la siguiente TM 
+
+$D_{A_{TM}}=$`` input $\innp{M,\omega}$ con $M$ una TM 
+\begin{enumerate}
+    \item Construir $M'$ como antes usando $\innp{M,\omega}$.
+    \item Aceptar si $D_{T^c}$ acepta $\innp{M'}$. Rechazar si $D_{T^c}$ rechaza $\innp{M'}$.''
+\end{enumerate}
+
+Como $D_{T^c}$ decide $T^c$ entonces $D_{A_{TM}}$ siempre se detiene por lo que $L(D_{A_{TM}})$ es decidible, y de \eqref{reduction reverse} se tiene que 
+\[
+    A_{TM}=L(D_{A_{TM}}),
+\]
+
+lo que implica que $A_{TM}$ es decidible lo que es una contradicción. 
+
+Concluimos así que $T^c$ es indecidible, por lo que $T$ es indecidible que es lo que queríamos probar. \qed
+
+\clearpage 
+%%%%%%%%%%%%%%
+% Problema 7 %
+%%%%%%%%%%%%%%
+\begin{question}[7]
+    Un estado \colemph{useless} en una máquina de Turing es un estado que nunca es visitado para cualquier cadena de entrada. Considera el problema de determinar si una máquina de Turing tiene estados \colemph{useless}. Formula este problema como un lenguaje y demuestra que es indecidible.
+\end{question}
+
+\Proof 
+Así como codificamos cadenas de caracteres y máquinas de Turing codificamos estados de unas máquina de Turing. 
+
+Por lo tanto formulamos el lenguaje de todas las máquinas de Turing con estados \colemph{useless} de la siguiente forma 
+\[
+    UL_{TM}=\cbr{\innp{M,q}\ |\ M\text{ es TM y }q \text{ es estado \colemph{useless} de }M}.
+\]
+
+Para demostrar que $UL_{TM}$ es indecidible procederemos por contradicción. 
+
+Supongamos que $UL_{TM}$ es decidible y sea $D_{UL_{TM}}$ una TM que lo decide. Definimos $D_{E_{TM}}$ de la siguiente forma 
+
+$D_{E_{TM}}=$`` input $\innp{M}$ con $M$ una TM 
+\begin{enumerate}
+    \item Simular $D_{UL_{TM}}$ con entrada $\innp{M,q_{\text{accept}}}$ donde $q_{\text{accept}}$ es el estado aceptor de M.
+    \item Aceptar si $D_{UL_{TM}}$ acepta $\innp{M,q_{\text{accept}}}$. Rechazar si $D_{UL_{TM}}$ rechaza $\innp{M,q_{\text{accept}}}$.''
+\end{enumerate}
+
+Observamos que $D_{E_{TM}}$ siempre se detiene pues $D_{UL_{TM}}$ lo hace, luego $L(D_{E_{TM}})$ es decidible. 
+
+Notamos que $D_{E_{TM}}$ acepta $\innp{M}$ sólo si $D_{UL_{TM}}$ acepta $\innp{M,q_{\text{accept}}}$, es decir, si $M$ nunca visita el estado aceptor, luego $L(M)=\emptyset$.
+
+Por lo tanto $D_{E_{TM}}$ acepta $\innp{M}$ si $L(M)=\emptyset$, en otro caso rechaza $\innp{M}$, de esto se sigue que 
+\[
+    E_{TM}=L(D_{E_{TM}}),
+\]
+
+luego $E_{TM}$ es decidible lo que es una contradicción pues por el \colemph{Teorema 5.2} de \cite{sipser} tenemos que $E_{TM}$ es indecidible. 
+
+Concluimos así que $UL_{TM}$ es indecidible que es lo que queríamos probar. \qed
+
+
+\clearpage
+%%%%%%%%%%%%%%
+% Problema 8 %
+%%%%%%%%%%%%%%
+\begin{question}[8]
+    ¿Cuales de las siguientes parejas de números son primos relativos?. Muestra los cálculos que te permiten dar las conclusiones
+    \begin{itemize}
+        \item [\colemph{a)}] $1274$ y $10505$
+        \item [\colemph{b)}] $7289$ y $8029$
+    \end{itemize}
+\end{question}
+
+\Proof 
+Para determinar si las parejas proporcionadas son de números primos relativos o no recurrimos al algoritmo presentado en el \colemph{Teorema 7.15} de \cite{sipser}.
+
+\begin{itemize}
+    \item [\colemph{a)}] Para la pareja $(10505,1274)$ la rutina es la siguiente 
+    \begin{enumerate}
+        \item $313\equiv 10505\text{ mod }1274$
+        \item $22\equiv 1274\text{ mod }313$
+        \item $5\equiv 313\text{ mod }22$
+        \item $2\equiv 22\text{ mod }5$
+        \item $1\equiv 5\text{ mod }2$
+        \item $0\equiv 2\text{ mod }1$
+    \end{enumerate}
+    
+    y en este último paso según la notación en la prueba del \colemph{Teorema 7.15} de \cite{sipser} se tiene que $y=0$ y $x=1$, 
+    por lo que $\text{gcd}(10505,1274)=1$, entonces la pareja de números $(10505,1274)$ es una pareja de números primos relativos.
+
+    \item [\colemph{b)}] Para la pareja $(8029,7289)$ el resultado del algoritmo de Euclides es el siguiente 
+    \begin{enumerate}
+        \item $740\equiv 8029\text{ mod }7289$
+        \item $629\equiv 7289\text{ mod }740$
+        \item $111\equiv 740\text{ mod }629$
+        \item $74\equiv 629\text{ mod }111$
+        \item $37\equiv 111\text{ mod }74$
+        \item $0\equiv 74\text{ mod }37$
+    \end{enumerate}
+
+    Por lo tanto $y=0$ y $x=37$ en el último paso del algoritmo, luego $\text{gcd}(8029,7289)=37$ entonces en este caso la pareja de números no son primos relativos entre sí. \qed
+\end{itemize}
+
+\clearpage
+%%%%%%%%%%%%%%
+% Problema 9 %
+%%%%%%%%%%%%%%
+\begin{question}[9]
+    Demuestra que $P$ es cerrado bajo unión, concatenación y complemento.
+\end{question}
+
+\Proof
+\begin{itemize}
+    \item \colemph{Unión:}
+    Primero probaremos la cerradura de $P$ respecto a la unión. Sean $L_1, L_2\in P$ y $M_1,M_2$ las TM que deciden en tiempo polinomial a $L_1$ y $L_2$ respectivamente. 
+
+    Construimos la siguiente TM
+    
+    $M=$``input $\omega\in\Sigma^*$
+    \begin{enumerate}
+        \item Simular $M_1$ en $\omega$, si se acepta, aceptar.
+        \item Simular $M_2$ en $\omega$, si se acepta, aceptar, en otro caso rechazar.''
+    \end{enumerate}
+    
+    Notamos que $M$ acepta $\omega$ si y sólo si $M_1$ o $M_2$ acepta $\omega$, por lo que $L(M)=L_1\cup L_2$, además $M$ es una máquina determinística de Turing porque $M_1$ y $M_2$ lo son. 
+    
+    Como $M_1$ y $M_2$ deciden en tiempo polinomial entonces las fases $1$ y $2$ del algoritmo anterior toman un tiempo polinomial, por lo que $M$ decide $L_1\cup L_2$ en tiempo polinomial y así $L_1\cup L_2\in P$, que es lo que queríamos ver.
+    
+    \item \colemph{Concatenación:}
+    De manera análoga al apartado anterior sean $L_1,L_2\in P$ y $M_1,M_2$ máquinas determinísticas que deciden $L_1$ y $L_2$, respectivamente. 
+
+    En este caso construimos la siguiente TM
+
+    $M=$``input $\omega\in\Sigma^*$
+    \begin{enumerate}
+        \item Iterar sobre cada descomposición en dos strings de $\omega$ de la forma $\omega=\omega_1\omega_2$.
+        \begin{itemize}
+            \item Simular $\omega_1\in M_1$ y $\omega_2\in M_2$. Si se acepta a ambos, aceptar.
+        \end{itemize}
+        \item Si $\omega$ no se acepta al intentar las posibles descomposiciones en dos strings, rechazar.'' 
+    \end{enumerate}
+    
+    Notamos que $M$ acepta $\omega$ si y sólo si existe una descomposición $\omega=\omega_1\omega_2$ tal que $\omega_1\in L_1$ y $\omega_2\in L_2$, por lo que $L(M)=L_1L_2$, es decir, $M$ decide la concatenación de $L_1$ y $L_2$.
+
+    Por otra parte, $M$ es una máquina determinística de Turing pues $M_1$ y $M_2$ lo son, además el ciclo en el paso $1$ es del orden $O(n)$ pues hay $n+1$ descomposiciones de $\omega$ distintas. Como la subrutina del ciclo en $1$ toma tiempo polinomial pues $M_1$ y $M_2$ deciden en tiempo polinomioal entonces $M$ decide en tiempo polinomial, luego $L_1L_2\in P$ que es lo que queríamos probar.
+    
+    \item \colemph{Complemento: }
+    Sea $L\in P$ y $M$ una TM determinística tal que $L=L(M)$ y $M$ decide en tiempo polinomial. 
+
+    Construimos la siguiente TM 
+
+    $M'=$`` input $\omega\in \Sigma^*$
+    \begin{enumerate}
+        \item Simular $M$ en $\omega$.
+        \item  Si $M$ acepta $\omega$ rechazar. Si $M$ rechaza $\omega$ aceptar.''
+    \end{enumerate}
+
+    Observamos que $\omega\in L(M')$ si $\omega$ es rechazada por $M$, es decir, $\omega\not\in L(M)$ lo que equivale a $\omega\in L(M)^c$, de manera similar si $\omega\not\in L(M')$ entonces $\omega$ es rechazada por $M'$, luego $\omega\in L(M)$ que es equivalente a $\omega\not\in L(M)^c$.
+
+    Por lo tanto 
+    \[
+        L(M')=L^c.
+    \]
+
+    Como en la construcción de $M'$ sólo simulamos $M$ que corre en tiempo polinomial entonces $M'$ decide en tiempo polinomial, concluimos así que $L^c\in P$, que es lo que queríamos verificar. \qed
+\end{itemize}
+
+\clearpage
+%%%%%%%%%%%%%%%
+% Problema 10 %
+%%%%%%%%%%%%%%%
+\begin{question}[10]
+    Demuestra que si $P=NP$, entonces todo lenguaje $A\in P$, excepto $A=\emptyset$ y $A=\Sigma^*$, es $NP$-completo.
+\end{question}
+
+\Proof 
+Vamos a demostrar que todo lenguaje $A\in P$, excepto $A=\emptyset$ y $A=\Sigma^*$, es tal que 
+\begin{itemize}
+    \item [\colemph{(i)}] $A\in NP$
+    \item [\colemph{(ii)}] Para todo $B\in NP$ se cumple $B\leq_P A$.
+\end{itemize}
+
+La condición \colemph{(i)} es clara pues $A\in P$ y por hipótesis $P=NP$.
+
+Para demostrar la condición \colemph{(ii)} consideremos $x,y\in\Sigma^*$ tales que 
+\[
+    x\in A\y y\not\in A,
+\]
+
+esto lo podemos hacer pues $A\neq\emptyset$ y $A\neq \Sigma^*$.
+
+Como $P=NP$ entonces para todo $B\in NP$ existe $M_B$ una máquina determinística de Turing tal que $L(M_B)=B$ y $M_B$ lo hace en tiempo polinomial. 
+
+Construimos la siguiente TM 
+
+$M=$`` input $\omega\in \Sigma^*$
+\begin{enumerate}
+    \item Simular $M_B$ con entrada $\omega$
+    \item Si $M_B$ acepta $\omega$, escribir $x$ en la cinta y aceptar.
+    \item Si $M_B$ rechaza $\omega$, escribit $y$ en la cinta y rechazar.''
+\end{enumerate}
+
+Como $M_B$ decide $B$ en tiempo polinomial entonces $M$ decide $B$ también en tiempo polinomial y termina con $x$ o $y$ en la cinta, según si la cadena de entrada está o no en $B$.
+
+Por lo tanto la función $f:\Sigma^*\rightarrow\Sigma^*$ definida como 
+\[
+    f(\omega)=\left\lbrace\begin{matrix}
+        x&\ \text{ si }\omega\in B\\ 
+        y&\ \text{ si }\omega\not\in B
+    \end{matrix}\right.
+\]
+es una función calculable en tiempo polinomial \parencite[Ver][Definición 7.28]{sipser}, además notamos que para todo $\omega\in B$ se tiene que $M$ acepta $\omega$ y $f(\omega)=x\in A$, por lo que 
+\[
+    \omega\in B\then f(\omega)=x\in A.
+\]
+
+Por otro lado, si $\omega\not\in B$ entonces $M$ rechaza $\omega$ y escribe $y$ en la cita, esto es $f(\omega)=y\not\in A$, luego 
+\[
+    \omega\not\in B\then f(\omega)=y\not\in A,
+\]
+
+que al tomar contrapositiva es equivalente a
+\[
+    f(\omega)\in A\then \omega\in B.    
+\]
+
+Se sigue de lo anterior que para todo $\omega\in\Sigma^*$ 
+\[
+    \omega\in B\ssi f(\omega)\in A,
+\]
+
+por lo que $B\leq_P A$. 
+
+Concluimos que todo $B\in NP$ es reducible en tiempo polinomial a $A$, por lo que todo lenguaje $A\in P$ es $NP$-completo si $A\neq \emptyset$ y $A\neq \Sigma^*$, que es precisamente lo que queríamos probar. \qed
+
+\clearpage
+%%%%%%%%%%%%%%%%
+% Bibliografía %
+%%%%%%%%%%%%%%%%
+\nocite{*}
+\printbibliography
+
+
+\end{document}
+
+
+
+
+

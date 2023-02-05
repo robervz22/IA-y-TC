@@ -1,0 +1,273 @@
+
+% Required for TeX packages
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{hw-shortcuts}[2020/03/27 Custom homework shortcuts as a package]
+
+%\usepackage[utf8]{inputenc}
+%\usepackage[spanish]{babel}
+%\usepackage{setspace}
+%\usepackage[svgnames]{xcolor}
+%\usepackage{subcaption}
+%\usepackage{fancyhdr}
+%\usepackage[colorinlistoftodos]{todonotes}
+%\usepackage{rotating}
+%\usepackage{stackrel}
+%\usepackage{pstricks-add}
+%\usepackage[all]{xy}
+%\usepackage{listings}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Custom commands -- math symbols and math shortcuts
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Paquetes que se van a cargar al cargar estas macros
+\RequirePackage{mathtools}
+\RequirePackage{amssymb}
+\RequirePackage{amsthm}
+\RequirePackage{thmtools}
+\RequirePackage{bbm}
+\RequirePackage{dsfont}
+\RequirePackage{bm}
+\RequirePackage{mathrsfs}
+\RequirePackage{xcolor}
+\RequirePackage[framemethod=tikz]{mdframed}
+\RequirePackage[bb=px, bbscaled=0.91,
+  cal=txupr, calscaled=.91,
+  frak=euler,frakscaled=.91,
+  scr=boondoxupr]{mathalpha}
+\let\amsmathbb\mathbb
+\let\amsmathcal\mathcal
+\let\amsmathfrak\mathfrak
+\let\amsmathscr\mathscr
+\AtBeginDocument{%
+    \let\mathbb\relax
+    \newcommand{\mathbb}[1]{\amsmathbb{#1}}
+    \let\mathcal\relax
+    \newcommand{\mathcal}[1]{\amsmathcal{#1}}
+    \let\mathfrak\relax
+    \newcommand{\mathfrak}[1]{\amsmathfrak{#1}}
+    \let\mathscr\relax
+    \newcommand{\mathscr}[1]{\amsmathscr{#1}}
+}
+
+\newlength{\leftbarwidth}
+\setlength{\leftbarwidth}{3pt}
+\newlength{\leftbarsep}
+\setlength{\leftbarsep}{10pt}
+
+% paréntesis inteligentes
+\DeclarePairedDelimiterX{\cpp}[1]{(}{)}{\def\given{\;\delimsize\vert\;}#1}
+\DeclarePairedDelimiterX{\cbk}[1]{[}{]}{\def\given{\;\delimsize\vert\;}#1}
+\DeclarePairedDelimiterX{\cbr}[1]{\lbrace}{\rbrace}{\def\given{\;\delimsize\vert\;}#1}
+\DeclarePairedDelimiterX{\innp}[1]{\langle}{\rangle}{\def\given{\;\delimsize\vert\;}#1}
+\let\abs\relax\DeclarePairedDelimiter\abs{\lvert}{\rvert}
+\let\norm\relax\DeclarePairedDelimiter\norm{\lVert}{\rVert}
+
+\newcommand{\D}{\mathcal{D}}
+\newcommand{\Hy}{\mathcal{H}}
+\newcommand{\VS}{\textrm{VS}}
+\newcommand{\solution}{~\newline\textit{(Solución)}\newline }
+\newcommand{\bbF}{\mathbb{F}}
+\newcommand{\bbX}{\mathbb{X}}
+\newcommand{\bI}{\mathbf{I}}
+\newcommand{\bX}{\mathbf{X}}
+\newcommand{\bZ}{\mathbf{Z}}
+\newcommand{\bY}{\mathbf{Y}}
+\newcommand{\bepsilon}{\boldsymbol{\epsilon}}
+\newcommand{\balpha}{\boldsymbol{\alpha}}
+\newcommand{\bbeta}{\boldsymbol{\beta}}
+\newcommand{\0}{\mathbf{0}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Po}{\mathcal{P}}
+%\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand\g[1]{\langle #1\rangle}
+%\newcommand{\abs}[1]{\left\lvert#1\right\rvert}
+\newcommand{\x}{\mathbf{x}}
+\newcommand{\z}{\mathbf{z}}
+\newcommand{\w}{\mathbf{w}}
+%\newcommand{\va}{\mathbf{a}}
+%\newcommand{\vb}{\mathbf{b}}
+\newcommand{\bd}{\boldsymbol{\delta}}
+\newcommand{\bu}{\mathbf{u}}
+\newcommand\floor[1]{\lfloor #1\rfloor}
+%-----------
+% Más Macros 
+%-----------
+
+\def\EE{\mathbb{E}}
+\def\PP{\mathbb{P}}
+\def\Ref#1{(\ref{#1})}
+\def\B{{\ca B}}
+\def\Dem{{\noindent\bf Demostración. }}
+\def\A{{\ca A}}
+\def\r#1{\PP\left[ #1\right]}
+\def\pp{{\cal P}}
+\def\bs{\backslash }
+\def\ca#1{{\cal #1}}
+\def\caa#1{\mbox{\calll #1}}
+\def\ssi{\mbox{$\ \ \Longleftrightarrow\ \ $ }}
+\def\then{\mbox{$\ \ \Rightarrow\ \ $ }}
+\def\salg#1{\boldsymbol{\sigma}\left(#1\right)}
+\def\bsym#1{\boldsymbol{#1}}
+\def\bf#1{\mathbf{#1}}
+%--------
+% Letras
+%--------
+
+\def\X{\frak{X}}
+\def\F{{\ca{F}}}
+\def\G{\mbox{{\call G}}}
+\def\H{\mbox{{\call H}}}
+\def\Ca#1{\mbox{\call #1}}
+\def\M{\mbox{{\call M}}}
+%\def\ee#1{\EE\L[#1\R]}
+\def\const{{\rm Const.\,}}
+\def\y{\quad\mbox{y}\quad}
+\def\bphi{\bm{\phi}}
+\def\bpsi{\bm{\psi}}
+\def\N{\mathbb{N}}
+\def\Lalfa{\bm{\Delta}_{\alpha}}
+\def\prd#1{\displaystyle\Pr\Le[#1\Ri]}
+\def\Pr#1{\mathbb{P}\!\left[ #1\right]}
+\def\ni{\noindent}
+\def\ar#1{\overset{#1}{\to}}
+\def\eqd#1{\overset{#1}{=}}
+\def\ginv#1{#1^{\leftarrow}}
+
+%---------------
+% Abreviaciones
+%---------------
+\def\ofp{(\Omega,\F,\PP)}
+\def\ofmu{(\bX,\frak X,\mu)}
+\def\bea*{\begin{eqnarray*}}
+\def\eea*{\end{eqnarray*}}
+\def\beq*{\begin{equation*}}
+\def\eeq*{\end{equation*}}
+\def\bsp{\begin{split}}
+\def\esp{\end{split}}
+\def\mucd{\mbox{$\mu$ c.d.}}
+\def\m*{\mu^*}
+\def\be{\begin{enumerate}}
+\def\ee{\end{enumerate}}
+\def\Ph{\phantom{\int}\!\!\!\!\!\!\!\!}
+\def\ph{\phantom{1^l\!\!\!\!\!\!\!}}
+\def\ld{\ldots}
+\def\tf{\mbox{$\therefore$\ }}
+\def\fa{\mbox{$\ \forall\ $}}
+\def\num#1{(\textcolor{red}{#1})}
+\newcommand{\var}[1]{\mathrm{var}\left( #1 \right)}
+\newcommand{\cov}[1]{\mathrm{cov}\left( #1 \right)}
+
+
+% Set of functions integrable in the Riemann sense and equal sign denoted with L'Hospitals' rule
+\newcommand{\Rf}{\ensuremath{\mathcal{R}(\alpha)}}
+\newcommand{\lh}{\ensuremath{\overset{\text{L'H}}{=}}}
+
+% LCM function
+\newcommand{\lcm}{\ensuremath{\mathrm{lcm}}}
+
+% Legendre symbol
+\newcommand{\leg}[2]{\ensuremath{\left( \frac{#1}{#2} \right)}}
+
+
+% Colors
+% See http://web.njit.edu/~kevin/rgb.txt.html for possibilities
+\definecolor{RobDarkBlue}{rgb}{.1,0,.2}  
+\definecolor{RobBlue}{rgb}{.1,.1,.5}  
+\definecolor{RobRoyal}{rgb}{.2,.2,.8}  
+%\definecolor{ChadGreen}{rgb}{0,.35,.1}
+%\definecolor{ChadGreen}{rgb}{0,.5,.25}  % Too bright
+%\definecolor{ChadGreen}{rgb}{0,.4,.2}    % Still too bright
+\definecolor{RobGreen}{rgb}{0,.4,0}    % Dark Green
+%\definecolor{ChadRed}{rgb}{.8,.1,.2}    % Too bright
+\definecolor{RobRed}{rgb}{.5,0,.5}  % purple
+
+%%% HYPERLINKS %%%%%%%%%%%%%%%%%%%%%
+\usepackage[colorlinks,breaklinks,   % deleted ps2pdf 11/6/15
+     bookmarks=false,
+     pdfstartview=Fit,  % for fitting entire page; FitW just fits width
+     pdfview=Fit,       % after traversing a hyperlink
+     linkcolor=RobRed,
+     urlcolor=RobGreen,
+     citecolor=Black,
+     hyperfootnotes=false
+         ]{hyperref}
+\usepackage[figure,table]{hypcap} % Correct a problem with hyperref
+\urlstyle{rm} %so it doesn't use a typewriter font for url's.
+
+%%%%%%%%%%%%%%%%%%%%%
+
+
+% Fix title, sections, etc.
+
+\let\LaTeXtitle\title
+\renewcommand{\title}[1]{\LaTeXtitle{\color{RobBlue}{\LARGE #1}}}
+\renewcommand{\abstractname}{\color{RobBlue}Abstract}
+\renewcommand{\figurename}{\color{RobBlue}Figura}
+\renewcommand{\tablename}{\color{RobBlue}Tabla}
+
+\let\LaTeX@startsection\@startsection 
+\renewcommand{\@startsection}[6]{\LaTeX@startsection%
+{#1}{#2}{#3}{#4}{#5}{\color{RobBlue}\raggedright #6}} 
+
+
+% Spacing in Tables and Figures
+%\renewcommand{\tabcolsep}{1pt}   % space between columns
+\renewcommand{\arraystretch}{1.5} % space between rows
+\addtolength{\textfloatsep}{0pt} % space between floats and text
+\addtolength{\abovecaptionskip}{0pt} % space above caption
+\addtolength{\belowcaptionskip}{.15in} % space below caption
+
+% Make hyperlinks jump more accurately
+\makeatletter
+\newcommand\org@hypertarget{}
+\let\org@hypertarget\hypertarget
+\renewcommand\hypertarget[2]{%
+\Hy@raisedlink{\org@hypertarget{#1}{}}#2%
+} \makeatother 
+
+%% Shortcut commands
+\newcommand{\growth}[1]{\frac{\dot{#1}_t}{{#1}_t}}
+\newcommand{\prtl}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\prtlsec}[2]{\frac{\partial^2 #1}{\partial #2^2}}
+\newcommand{\commentno}[2]{\underset{\mbox{#2}}{#1}}
+\newcommand{\comment}[2]{\underbrace{#1}_{\mbox{{\small \color{RobGreen}#2}}}}
+\newcommand{\cn}[1]{\citet*{#1}}
+\newcommand{\cnp}[1]{(\citealt{#1})}  % (Jones 2002)
+\newcommand{\up}[0]{\uparrow \hspace{-.5ex}}  % \! is a negative thinspace
+\newcommand{\down}[0]{\downarrow \hspace{-.5ex}}
+\newcommand{\query}[1]{{\it \color{red}[??? #1]}}
+
+
+%\newcommand{\fignote}[2]{\begin{center}\parbox[c]{#1}{\footnotesize #2} \end{center}}
+%\newcommand{\tabnote}[2]{\begin{center}\parbox[c]{#1}{\footnotesize #2} \end{center}}
+\newcommand{\SubSubSection}[1]{\subsubsection{#1} \baselineskip=18pt}
+\newcommand{\problem}[2]{\hspace{.1in} {{\color{RobBlue}{\bf #1:} #2}}}
+\newcommand{\proptitle}[1]{\color{RobBlue} \textnormal{(#1):}}
+\newtheorem{proposition}{\color{RobGreen} Proposición}
+\newcommand{\assume}[2]{{\bf{Supuesto #1}} (#2)} 
+\newcommand{\Proof}{{{\color{RobRed}\textit{Solución: }}}}
+\newcommand{\pfrac}[2]{\left( \frac{#1}{#2} \right)}  % 
+\newcommand{\colemph}[1]{{\color{RobRed}{\emph{#1}}}}
+
+% QED
+\providecommand{\openbox}{\leavevmode
+  \hbox to.77778em{%
+  \hfil\vrule
+  \vbox to.675em{\hrule width.6em\vfil\hrule}%
+  \vrule\hfil}}
+\makeatletter
+\DeclareRobustCommand{\qed}{%
+  \ifmmode
+    \eqno \def\@badmath{$$}%$$
+    \let\eqno\relax \let\leqno\relax \let\veqno\relax
+    \hbox{\color{RobRed}{\openbox}}%
+  \else
+    \leavevmode\unskip\penalty9999 \hbox{}\nobreak\hfill
+    \quad\hbox{\color{RobRed}{\openbox}}%
+  \fi
+}
+\makeatother
+

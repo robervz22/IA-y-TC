@@ -1,0 +1,354 @@
+\documentclass{article}
+\usepackage{standalone}
+\usepackage{import}
+\usepackage[margin=1in,headheight=57pt,headsep=0.1in]{geometry}
+%\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{automata, positioning, arrows}
+
+
+%\usepackage[framemethod=TikZ]{mdframed}
+\usepackage{fancyhdr}
+\usepackage{hw-shortcuts}
+\usepackage[spanish]{babel}
+% ------------- %
+% HEADER/FOOTER %
+% ------------- %
+\setlength\parindent{0pt}
+\setlength\headheight{30pt}
+\headsep=0.25in
+\lhead{\textbf{\coursetitle{}}}
+\rhead{\textbf{\course}}
+
+
+% ----------------- %
+% BOXED EXPRESSIONS %
+% ----------------- %
+\newenvironment{prop}[1][]{
+\ifstrempty{#1}
+    {} % Don't add header
+    {\mdfsetup{
+        frametitle={
+            \tikz[baseline=(current bounding box.east),outer sep=0pt]
+            \node[anchor=east,rectangle,fill=blue!30]
+            {Proposición #1};}}
+    } % Header
+    \mdfsetup{
+        innertopmargin=10pt,linecolor=blue!30,
+        linewidth=2pt,topline=true,
+        frametitleaboveskip=\dimexpr-\ht\strutbox\relax
+    }
+    \begin{mdframed}
+}{
+    \end{mdframed}
+}
+
+\newenvironment{question}[1][]{
+\ifstrempty{#1}
+    {}
+    {\mdfsetup{
+        frametitle={
+            \tikz[baseline=(current bounding box.east),outer sep=0pt]
+            \node[anchor=east,rectangle,fill=red!30]
+            {Problema #1};}}
+    }
+    \mdfsetup{
+        innertopmargin=10pt,linecolor=red!30,
+        linewidth=2pt,topline=true,
+        frametitleaboveskip=\dimexpr - \ht\strutbox\relax
+    }
+    \begin{mdframed}
+}{
+    \end{mdframed}
+}
+
+\newenvironment{lem}[1][]{
+\ifstrempty{#1}
+    {}
+    {\mdfsetup{
+        frametitle={
+            \tikz[baseline=(current bounding box.east),outer sep=0pt]
+            \node[anchor=east,rectangle,fill=green!30]
+            {Lema #1};}}
+    }\newcommand{\coNP}{\ensuremath{\mathsf{coNP}}}
+
+    % Commonly-used reductions add semantic clarity
+    \newcommand{\CookReducesTo}{\ensuremath{\leq^P_T}}
+    \newcommand{\KarpReducesTo}{\ensuremath{\leq^P_m}}
+    \mdfsetup{
+        innertopmargin=10pt,linecolor=green!30,
+        linewidth=2pt,topline=true,
+        frametitleaboveskip=\dimexpr - \ht\strutbox\relax
+    }
+    \begin{mdframed}
+}{
+    \end{mdframed}
+}
+%-------%
+% FONTS %
+%-------%
+
+% Skip lines and don't indent
+\setlength{\parindent}{0em}
+\setlength{\parskip}{1em}
+
+% Import math fonts and symbols
+\RequirePackage{amsfonts}
+\RequirePackage{amsmath,amsthm,amssymb}
+
+% Palatino typeface -- includes (old-style) text figures
+\RequirePackage[osf]{mathpazo}
+
+% Hipervínculos
+\hypersetup{
+    colorlinks=true,
+    linkcolor=RobRed,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdfauthor={R. Vasquez},
+    pdftitle={Tarea 2},
+    citecolor=RobRed
+}
+
+
+
+% ---------- %
+% PARAMETERS %
+% ---------- %
+\newcommand\course{IA \& TC}
+\newcommand\coursetitle{Tarea 2}
+\newcommand\prof{Jesús Rodríguez Viorato}
+\newcommand\semester{Agosto-Diciembre 2021}
+\newcommand\name{Roberto Vásquez Martínez}
+
+% -------- %
+% DOCUMENT %
+% -------- %
+\tikzset{
+->, % makes the edges directed
+%>=stealth’, % makes the arrow heads bold
+node distance=3cm, % specifies the minimum distance between two nodes. Change if necessary.
+every state/.style={thick, fill=gray!10}, % sets the properties for each ’state’ node
+initial text=$ $, % sets the text that appears on the start arrow
+}
+\begin{document}
+\begin{titlepage}
+    \centering
+    \vspace*{\fill}
+    \textsc{\LARGE{\coursetitle}}\\[0.3cm]
+    \textsc{\Large{Profesor: \prof}}\\[0.3cm]
+    \textsc{\large{\course}}\\[0.3cm]
+    \textsc{\large{\semester}}\\
+    \vspace*{\fill}
+    \textsc{\name}
+\end{titlepage}
+\pagebreak
+\setcounter{page}{1}
+
+\pagestyle{fancy}
+
+%%%%%%%%%%%%%%
+% Problema 1 %
+%%%%%%%%%%%%%%
+\begin{question}[1]
+Dibuja un autómata no determinista que reconozca el lenguaje $L=\cbr{\omega\in\cbr{0,1}^{\ast}\ :\ \omega\mbox{ termina en }00}$ y que sólo tenga 3 estados.
+\end{question}
+
+\Proof 
+Sea $M_1=(Q,\Sigma,p_1,\delta,A)$ el autómata no determinístico donde
+\begin{equation*}
+    \begin{split}
+        Q=&\cbr{q_1,q_2,q_3}\\ 
+        p_1&\mbox{ es el estado inicial}\\ 
+        \Sigma=&\cbr{0,1}\\ 
+        A=&\cbr{q_3},
+    \end{split}
+\end{equation*}
+
+y la función de transición viene descrita por el siguiente diagrama. 
+
+\begin{figure}[h!]
+    \centering 
+    \begin{tikzpicture}
+        \node[state, initial] (q1) {$q_1$};
+        \node[state, right of=q1] (q2) {$q_2$};
+        \node[state,accepting, right of=q2] (q3) {$q_3$};
+        \draw (q1) edge[loop above] node{0,1} (q1)
+              (q1) edge[above] node{0} (q2)
+              (q2) edge[above] node{0} (q3);
+    \end{tikzpicture}
+    \caption{Diagrama que ilustra la función de transición de el autómata $M_1$}
+\end{figure}
+
+y este es el autómata que acepta todas las cadenas binarias que terminan en $00$, que es lo que queríamos hallar \qed
+\clearpage
+%%%%%%%%%%%%%%
+% Problema 2 %
+%%%%%%%%%%%%%%
+\begin{question}[2]
+    Usa el método visto en clase para convertir los siguientes dos autómatas no deterministas en sus equivalentes determinísticos. 
+\end{question}
+
+\Proof 
+\begin{itemize}
+    \item[$\colemph{a)}$]
+    Aplicando el algoritmo visto en clase, con la convención de leer la cadena vacía siempre y cuando antes se halla leído un caractér se tienen los siguiente autómata equivalente 
+    \begin{figure}[h!]
+        \centering 
+        \begin{tikzpicture}
+            \node[state,accepting, initial] (1) {$1$};
+            \node[state, above of=1] (2) {$2$};
+            \node[state, accepting,right of=1] (12) {$12$};
+            \node[state, above of=12] (v) {$\emptyset$};
+            
+            \draw (1) edge[bend right,right] node{b} (2)
+                  (2) edge[bend right,right] node{b} (1)
+
+                  (1) edge[bend right,below] node{a} (12)
+                  (12) edge[loop right] node{a,b} (12)
+
+                  (2) edge[above] node{a} (v)
+                  (v) edge[loop right] node{a,b} (v);
+        \end{tikzpicture}
+        \caption{Diagrama que ilustra al autómata determinístico para el inciso $a)$}
+    \end{figure}
+    y este es el autómata determinístico equivalente buscado. 
+
+    \item[$\colemph{b)}$] En este caso si utilizamos la convención de antes de pasar por una cadena vacía pasar por un caracter. El diagrama del autómata determinístico equivalente, quitando ya los estados a los que no se llega a partir del estado inicial, es
+    \begin{figure}[h!]
+        \centering 
+        \begin{tikzpicture}
+            \node[state,accepting, initial] (12) {$1$};
+            \node[state, above of=12] (v) {$\emptyset$};
+            \node[state, accepting,right of=12] (123) {$123$};
+            \node[state, above of=123] (23) {$23$};
+            
+            \draw (12) edge[right] node{b} (v)
+                  (v) edge[loop above] node{a,b} (v)
+
+                  (12) edge[below] node{a} (123)
+                  (123) edge[right] node{b} (23)
+                  (123) edge[loop right] node{a} (123)
+
+                  (23) edge[below] node{a} (12)
+                  (23) edge[loop right] node{b} (23);
+        \end{tikzpicture}
+        \caption{Diagrama que ilustra al autómata determinístico para el inciso $b)$}
+    \end{figure}
+
+    Cabe mencionar que en el diagrama abreviamos, por ejemplo, al conjunto $\cbr{1,2}$ como $12$ para etiquetar a los estados. El diagrama anterior es el diagrama determinístico equivalente buscado. \qed
+\end{itemize}
+
+\clearpage
+%%%%%%%%%%%%%%
+% Problema 3 %
+%%%%%%%%%%%%%%
+\begin{question}[3]
+    Pruebe que cualquier autómata no determinístico se puede cambiar a uno equivalente con un sólo estado aceptor. 
+\end{question}
+
+\Proof 
+Sea $M=(Q,\Sigma, q_0,\delta,A)$ un autómata no determinístico. 
+
+Consideremos $q_{\varepsilon}$ un estado nuevo. Sea $M'=(Q\cup\cbr{q_\varepsilon},\Sigma,q_0,\delta',\{q_{\varepsilon}\})$ un autómata no determinístico tal que $\delta': Q\cup\cbr{q_\varepsilon}\times \Sigma_{\varepsilon}\rightarrow \ca{P}(Q\cup \cbr{q_{\varepsilon}})$ la función de transición queda definida por 
+\begin{equation*}
+    \delta'(q,a)=\left\lbrace\begin{matrix}
+        \delta(q,a)&\ \ \mbox{si }q\in Q\backslash A\y a\in\Sigma_{\varepsilon}\\ 
+        \delta(q,a)&\ \ \mbox{si }q\in A\y a\in\Sigma\\
+        \delta(q,a)\cup \{q_{\varepsilon}\}&\ \ \mbox{si }q\in A\y a=\varepsilon\\ 
+        \emptyset&\ \ \mbox{si }q=q_\varepsilon\y a\in\Sigma_{\varepsilon}
+    \end{matrix}\right.
+\end{equation*}
+
+Lo que nos dice la anterior función de transición es que el autómata $M'$ se comporta igual que $M$, sin embargo los únicos.
+
+Como solo de los estados en $A$ se puede llegar a $\{q_{\varepsilon}\}$ en $M'$, y por construcción $q_{\varepsilon}$ es el único estado aceptor de $M'$ entonces toda cadena aceptada en $M$ debió iniciar en $q_0$ y tener cómo penúltimo estado a algún estado de $A$ para después ser aceptada llegando a $q_{\varepsilon}$ mediante la cadena vacía, luego toda cadena aceptada en $M$ es una cadena aceptada en $M'$. 
+
+De manera similar, una cadena aceptada en $M'$ debió tener como penúltimo estado a algún estado de $A$, luego como de cualquier estado de $A$ sólo se puede llegar al único estado aceptor $q_{\varepsilon}$ de $M'$ mediante la cadena vacía, ignorando la cadena vacía obtenemos una cadena aceptada en $M$.
+
+Por lo tanto $M$ es equivalente a $M'$ con $M'$ un autómata no determinístico con un sólo estado aceptor. \qed
+
+\clearpage
+%%%%%%%%%%%%%%
+% Problema 4 %
+%%%%%%%%%%%%%%
+\begin{question}[4]
+    Para una cadena $\omega=a_1a_2\dots a_n$ el reverso de $\omega$ se define como $\omega^R=a_na_{n-1}\dots a_1$. Para todo lenguaje $L$ sea $L^R=\cbr{\omega^R\ :\ \omega\in L}$. Demuestra que si $L$ es regular entonces $L^R$ también lo es.  
+\end{question}
+
+\Proof
+Como $L$ es regular sea $M=(Q,\Sigma,q_0,\delta_M,A)$ el autómata finito que reconoce al lenguaje $L$. Como los autómatas finitos determinísticos. 
+
+De manera análoga al \colemph{Problema 3}, agregando el estado $q_{\varepsilon}$ construimos un autómata no determinístico $N=(Q\cup \{q_{\varepsilon}\},\Sigma,q_0,\delta_N,\{q_{\varepsilon}\})$ equivalente a $M$ y con un sólo estado aceptor. 
+
+Sea el autómata no determinista $N_R=(Q\cup\cbr{q_{\varepsilon}},\Sigma,q_{\varepsilon},\delta_{N_R},\cbr{q_0})$ con función de transición definida de la siguiente forma 
+\begin{equation*}
+    \delta_{N_R}(q,a)=\left\lbrace\begin{matrix}
+        \delta_M^{-1}(q,a)&\mbox{ si }q\in Q\y a\in\Sigma\\ 
+        A& \mbox{ si }q=q_\varepsilon\y a=\varepsilon\\ 
+        \emptyset&\mbox{ si }q=q_{\varepsilon}\y a\in \Sigma
+    \end{matrix}\right.
+\end{equation*}
+
+cabe mencionar que $\delta_M^{-1}(q,a)$ está bien definida porque $M$ es un autómata determinístico, es decir, para $q\in Q$ existe un único $p\in Q$ tal que de $p$ se puede llegar a $q$ mediante $a$, es decir, $p=\delta_M^{-1}(q,a)$ pues $\delta_M(p,a)=q$ con $p\in Q$ y $a\in\Sigma$.
+
+Utilizaremos la función de transición extendida\footnote{Ver Definición 2.12 John Martin, Introduction to Languages and Theory of Computation, \colemph{2010}}, probaremos que existe un camino de $p$ a $q$ en $N$ codificado por la cadena $\omega$ si y sólo si existe un camino de $q$ a $p$ codificado por la cadena $\omega^R$ con $p,q\in Q$.
+
+Procederemos por inducción sobre la longitud de la cadena $\omega$. Para $\abs{\omega}=1$ el resultado se sigue de la definición de $\delta_{N_R}$.
+
+Supongamos que el resultado se cumple para $\abs{\omega}<n$. Sea $\abs{\omega}=n$ y $\omega=xa$ con $a\in\Sigma$.
+
+Sea $p\in\delta_N^{\ast}(q,xa)$. Sabemos que 
+\begin{equation*}
+    \delta_N^{\ast}(q,xa)=\delta_N(\delta_{N}^{\ast}(q,x),a).
+\end{equation*}
+
+Observamos que todo $p'\in \delta_{N}^{\ast}(q,x)$ esta conectado con $q$ a través de la expresión $x$, como $\abs{x}<n$ por hipótesis de inducción se tiene que $p'\in \delta_{N}^{\ast}(q,x)$ si y sólo si $q\in\delta_{N_R}^{\ast}(p',x^R)$.
+
+De lo anterior tenemos que $p\in\delta_N^{\ast}(q,xa)$ si y sólo si $q\in\delta_{N_R}^{\ast}(p,ax^R)$, lo que concluye la inducción. 
+
+Con lo probado en la inducción anterior si consideramos $q=q_0$ y $p=r\in A$ tenemos que $\omega\in L(N)$, es decir, $q_0$ está conectado con $r$ para algún $r\in A$ por el camino $\omega$ si y sólo si $q_0\in \delta_{N_R}^{\ast}(r,\omega^R)$.
+
+Por como defininimos $\delta_{N_R}$ se tiene que $\delta_{N_R}(q_{\varepsilon},\varepsilon)=A$, por lo tanto $\omega\in L(M)$ si y sólo si $\varepsilon\omega^R\in L(N_R)$. 
+
+Concluimos así que $L^R=L(N_R)$ y por el Teorema de Kleene se tiene que $L^R$ es regular. \qed
+
+\clearpage
+%%%%%%%%%%%%%%
+% Problema 5 %
+%%%%%%%%%%%%%%
+\begin{question}[5]
+    Demuestre que el lenguaje de $L=\cbr{0^n1^m\ :\ n\neq m}$ no es regular.  
+\end{question}
+
+\Proof 
+Procederemos por contradicción. Supongamos que $L$ es regular, entonces por el \colemph{Pumping Lemma} existe $p$ natural tal que si $s\in L$ con $\abs{s}\geq p$ entonces $s=xyz$ y se satisfacen las siguientes condiciones
+\begin{enumerate}
+    \item Para todo $i\geq 0$, $xy^iz\in L$
+    \item $\abs{y}>0$
+    \item $\abs{xy}\leq p$.
+\end{enumerate}
+
+Consideremos $s=0^p1^{p+p!}$, por la tercer condición se tiene que $xy$ consta de puros $0$ en este caso, luego $y=0^a$ con $a=1,2,\dots,p$, observamos que $a\neq 0$ por la segunda condición. 
+
+Notamos que por la primer condición 
+\begin{equation*}
+    xy^iz=0^{p-a}0^{ia}1^{p+p!}
+\end{equation*}
+
+Sabemos que $a\mid p!$ pues $a=1,2,\dots,p$, luego si $i=\frac{p!}{a}+1\in\N$.
+
+Por lo tanto 
+\begin{align*}
+    xy^iz=&0^{p-a}0^{a(\frac{p!}{a}+1)}1^{p+p!}\\ 
+    =&0^{p-a}0^{p!+a}1^{p+p!}\\ 
+    =&0^{p+p!}1^{p+p!}\in L,
+\end{align*}
+
+lo cual es una contradicción a la definición de $L$.
+
+Concluimos así que $L$ no es regular. \qed
+
+\end{document}
+
+

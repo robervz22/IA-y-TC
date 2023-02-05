@@ -1,0 +1,283 @@
+\documentclass{article}
+\usepackage{standalone}
+\usepackage{import}
+\usepackage[margin=1in,headheight=57pt,headsep=0.1in]{geometry}
+%\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{automata, positioning, arrows}
+
+
+%\usepackage[framemethod=TikZ]{mdframed}
+\usepackage{fancyhdr}
+\usepackage{hw-shortcuts}
+\usepackage[spanish]{babel}
+% ------------- %
+% HEADER/FOOTER %
+% ------------- %
+\setlength\parindent{0pt}
+\setlength\headheight{30pt}
+\headsep=0.25in
+\lhead{\textbf{\coursetitle{}}}
+\rhead{\textbf{\course}}
+
+
+% ----------------- %
+% BOXED EXPRESSIONS %
+% ----------------- %
+\newenvironment{prop}[1][]{
+\ifstrempty{#1}
+    {} % Don't add header
+    {\mdfsetup{
+        frametitle={
+            \tikz[baseline=(current bounding box.east),outer sep=0pt]
+            \node[anchor=east,rectangle,fill=blue!30]
+            {Proposición #1};}}
+    } % Header
+    \mdfsetup{
+        innertopmargin=10pt,linecolor=blue!30,
+        linewidth=2pt,topline=true,
+        frametitleaboveskip=\dimexpr-\ht\strutbox\relax
+    }
+    \begin{mdframed}
+}{
+    \end{mdframed}
+}
+
+\newenvironment{question}[1][]{
+\ifstrempty{#1}
+    {}
+    {\mdfsetup{
+        frametitle={
+            \tikz[baseline=(current bounding box.east),outer sep=0pt]
+            \node[anchor=east,rectangle,fill=red!30]
+            {Problema #1};}}
+    }
+    \mdfsetup{
+        innertopmargin=10pt,linecolor=red!30,
+        linewidth=2pt,topline=true,
+        frametitleaboveskip=\dimexpr - \ht\strutbox\relax
+    }
+    \begin{mdframed}
+}{
+    \end{mdframed}
+}
+
+\newenvironment{lem}[1][]{
+\ifstrempty{#1}
+    {}
+    {\mdfsetup{
+        frametitle={
+            \tikz[baseline=(current bounding box.east),outer sep=0pt]
+            \node[anchor=east,rectangle,fill=green!30]
+            {Lema #1};}}
+    }\newcommand{\coNP}{\ensuremath{\mathsf{coNP}}}
+
+    % Commonly-used reductions add semantic clarity
+    \newcommand{\CookReducesTo}{\ensuremath{\leq^P_T}}
+    \newcommand{\KarpReducesTo}{\ensuremath{\leq^P_m}}
+    \mdfsetup{
+        innertopmargin=10pt,linecolor=green!30,
+        linewidth=2pt,topline=true,
+        frametitleaboveskip=\dimexpr - \ht\strutbox\relax
+    }
+    \begin{mdframed}
+}{
+    \end{mdframed}
+}
+%-------%
+% FONTS %
+%-------%
+
+% Skip lines and don't indent
+\setlength{\parindent}{0em}
+\setlength{\parskip}{1em}
+
+% Import math fonts and symbols
+\RequirePackage{amsfonts}
+\RequirePackage{amsmath,amsthm,amssymb}
+
+% Palatino typeface -- includes (old-style) text figures
+\RequirePackage[osf]{mathpazo}
+
+% Hipervínculos
+\hypersetup{
+    colorlinks=true,
+    linkcolor=RobRed,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdfauthor={R. Vasquez},
+    pdftitle={Tarea 1},
+    citecolor=RobRed
+}
+
+
+
+% ---------- %
+% PARAMETERS %
+% ---------- %
+\newcommand\course{IA \& TC}
+\newcommand\coursetitle{Tarea 1}
+\newcommand\prof{Jesús Rodríguez Viorato}
+\newcommand\semester{Agosto-Diciembre 2021}
+\newcommand\name{Roberto Vásquez Martínez}
+
+% -------- %
+% DOCUMENT %
+% -------- %
+\tikzset{
+->, % makes the edges directed
+%>=stealth’, % makes the arrow heads bold
+node distance=3cm, % specifies the minimum distance between two nodes. Change if necessary.
+every state/.style={thick, fill=gray!10}, % sets the properties for each ’state’ node
+initial text=$ $, % sets the text that appears on the start arrow
+}
+\begin{document}
+\begin{titlepage}
+    \centering
+    \vspace*{\fill}
+    \textsc{\LARGE{\coursetitle}}\\[0.3cm]
+    \textsc{\Large{Profesor: \prof}}\\[0.3cm]
+    \textsc{\large{\course}}\\[0.3cm]
+    \textsc{\large{\semester}}\\
+    \vspace*{\fill}
+    \textsc{\name}
+\end{titlepage}
+\pagebreak
+\setcounter{page}{1}
+
+\pagestyle{fancy}
+
+%%%%%%%%%%%%%%
+% Problema 1 %
+%%%%%%%%%%%%%%
+\begin{question}[1]
+(30 pts) Dibuja un autómata que acepte el lenguaje de todas las cadenas en $\{0,1\}^{\ast}$ que tengan un múltiplo de 3 de 1's
+\end{question}
+
+\Proof 
+Sea $L_1$ el lenguaje que consiste en todas las cadenas en $\{0,1\}^{\ast}$ con un múltiplo de 3 de 1's.
+
+Para cada cadena en $\{0,1\}^{\ast}$ tenemos que el número de $1's$ en la cadena puede ser congruente con $0,1,2$ módulo $3$, los estados $q_0,q_1$ y $q_2$ representarán cada una de estas posibilidades. 
+
+Por lo que pide el problema, queremos que nuestro estado aceptor sea el $q_0$. Si estoy en $q_0$ para regresar a este camino por siguiente vez consecutiva se debió agregar exactamente tres 1's más. Con esta heurística el autómata finito deseado, que denotaremos por $M_1$, es el siguiente:
+
+\begin{figure}[h!]
+    \centering 
+    \begin{tikzpicture}
+        \node[state,accepting, initial] (q0) {$q_0$};
+        \node[state, right of=q0] (q1) {$q_1$};
+        \node[state, right of=q1] (q2) {$q_2$};
+        \draw (q0) edge[loop above] node{0} (q0)
+              (q1) edge[loop above] node{0} (q1)
+              (q2) edge[loop above] node{0} (q2)
+              (q0) edge[above] node{1} (q1)
+              (q1) edge[above] node{1} (q2)
+              (q2) edge[bend left, below] node{1} (q0);
+    \end{tikzpicture}
+    \caption{Diagrama que ilustra al autómata $M_1$}
+\end{figure}
+
+y esto es lo que queríamos. \qed
+\clearpage
+%%%%%%%%%%%%%%
+% Problema 2 %
+%%%%%%%%%%%%%%
+\begin{question}[2]
+    (40 pts) Dibuja un autómata que acepte el lenguaje de todas las cadenas de $\{0,1\}^{\ast}$ que representen números en binario divisibles por 3.
+\end{question}
+
+\Proof 
+Sea $L_2$ el lenguaje de los números en expansión binaria divisibles por 3. 
+
+De manera similar al problema anterior, para cada número en expansión binaria este pertenece a una clase de equivalencia módulo 3. Los estados $p_0,p_1$ y $p_2$ representarán las clases de equivalencia $0,1$ y $2$ módulo 3. 
+
+Enlistando consecutivamente los números en su expansión binaria investigamos las transiciones posibles a cada uno de los estados. El estado aceptor es $p_0$ pues nos interesan los números múltiplos de 3; denotamos por $M_2$ al autómata que acepta el lenguaje $L_2$ y lo representamos en el siguiente diagrama:
+
+\begin{figure}[h!]
+    \centering 
+    \begin{tikzpicture}
+        \node[state,accepting, initial] (p0) {$p_0$};
+        \node[state, right of=p0] (p1) {$p_1$};
+        \node[state, right of=p1] (p2) {$p_2$};
+        \draw (p0) edge[loop above] node{0} (p0)
+              (p0) edge[bend left,above] node{1} (p1)
+
+              (p1) edge[bend left, above] node{0} (p2)
+              (p1) edge[bend left,below] node{1} (p0)
+
+              (p2) edge[bend left, below] node{0} (p1)
+              (p2) edge[loop above] node{1} (p2);
+    \end{tikzpicture}
+    \caption{Diagrama que ilustra al autómata $M_2$}
+\end{figure}
+
+y este es el autómata buscado. \qed
+
+\clearpage
+%%%%%%%%%%%%%%
+% Problema 3 %
+%%%%%%%%%%%%%%
+\begin{question}[3]
+    (30 pts) Construye el autómata producto de los autómatas que encontraste en los problemas 1 y 2. Esto para obtener un autómada que reconozca el lenguaje de las cadenas de 0's y 1's que en binario sean divisibles por 3 pero que NO tengan un múltiplo de 3 de 1's.
+\end{question}
+
+\Proof 
+Estamos buscando el autómata que acepte el lenguaje $L_2-L_1$. Sean $Q_1$ y $Q_2$ los estados de los autómatas $M_1$ y $M_2$ construidos en los problemas anteriores. Además, sean $A_1$ y $A_2$ los estados aceptores correspondientes. 
+
+Construiremos el autómata producto, denotado por $M$, que acepte al lenguaje $L_2-L_1$. Sea $Q=Q_2\times Q_1$ el conjunto de estados del autómata producto, si $A$ es el conjunto de estados aceptores entonces como estamos interesados en el lenguaje $L_2-L_1$ se tiene que 
+\[
+     A=\cbr{(p,q)\in Q\ :\ p\in A_2\y q\not\in A_1}=\{(p_0,q_1),(p_0,q_2)\}.
+\]
+
+Considerando el conjunto de estados aceptores $A$ y la función de transición para el autómata producto, representamos a través del siguiente diagrama al autómata $M$ que acepta el lenguaje $L_2-L_1$:
+
+\begin{figure}[h!]
+    \centering 
+    \begin{tikzpicture}
+        \node[state] (11) {$(p_1,q_1)$};
+        \node[state,accepting, left of=11] (01) {$(p_0,q_1)$};
+        \node[state, right of=11] (21) {$(p_2,q_1)$};
+        \node[state, initial, below of=01] (00) {$(p_0,q_0)$};
+        \node[state, below of=11] (10) {$(p_1,q_0)$};
+        \node[state, below of=21] (20) {$(p_2,q_0)$};
+        \node[state,accepting, above of=01] (02) {$(p_0,q_2)$};
+        \node[state, above of=11] (12) {$(p_1,q_2)$};
+        \node[state, above of=21] (22) {$(p_2,q_2)$};
+        \draw (00) edge[loop below] node{0} (00)
+              (00) edge[bend right,below] node{1} (11)
+              (10) edge[bend right,below] node{0} (20)
+              (10) edge[bend left,below] node{1} (01)
+              (20) edge[bend right,above] node{0} (10)
+              (20) edge[right] node{1} (21)
+
+              (01) edge[loop left] node{0} (01)
+              (01) edge[bend right,below] node{1} (12)
+              (11) edge[bend right,below] node{0} (21)
+              (11) edge[bend left,below] node{1} (02)
+              (21) edge[bend right, above] node{0} (11)
+              (21) edge[right] node{1} (22)
+
+              (02) edge[loop left] node{0} (02)
+              (02) edge[left] node{1} (10)
+              (12) edge[bend right, below] node{0} (22)
+              (12) edge[right] node{1} (00)
+              (22) edge[bend right, above] node{0} (12)
+              (22) edge[bend left, right] node{1} (20);
+
+
+        %      (p1) edge[bend left, above] node{0} (p2)
+        %      (p1) edge[bend left,below] node{1} (p0)
+
+        %      (p2) edge[bend left, below] node{0} (p1)
+        %      (p2) edge[loop above] node{1} (p2);
+    \end{tikzpicture}
+    \caption{Diagrama que ilustra al autómata $M$}
+\end{figure}
+
+y este es el autómata deseado. \qed
+
+
+
+\end{document}
+
+

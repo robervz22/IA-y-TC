@@ -1,0 +1,527 @@
+\documentclass{article}
+\usepackage{standalone}
+\usepackage{import}
+\usepackage[margin=1in,headheight=60pt,headsep=0.1in]{geometry}
+%\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{automata, positioning, arrows}
+
+%\usepackage[framemethod=TikZ]{mdframed}
+\usepackage{fancyhdr}
+\usepackage{hw-shortcuts}
+\usepackage[spanish]{babel}
+% ------------- %
+% HEADER/FOOTER %
+% ------------- %
+\setlength\parindent{0pt}
+\setlength\headheight{30pt}
+\headsep=0.25in
+\lhead{\textbf{\coursetitle{}}}
+\rhead{\textbf{\course}}
+
+
+% ----------------- %
+% BOXED EXPRESSIONS %
+% ----------------- %
+\newenvironment{prop}[1][]{
+\ifstrempty{#1}
+    {} % Don't add header
+    {\mdfsetup{
+        frametitle={
+            \tikz[baseline=(current bounding box.east),outer sep=0pt]
+            \node[anchor=east,rectangle,fill=blue!30]
+            {Proposición #1};}}
+    } % Header
+    \mdfsetup{
+        innertopmargin=10pt,linecolor=blue!30,
+        linewidth=2pt,topline=true,
+        frametitleaboveskip=\dimexpr-\ht\strutbox\relax
+    }
+    \begin{mdframed}
+}{
+    \end{mdframed}
+}
+
+\newenvironment{question}[1][]{
+\ifstrempty{#1}
+    {}
+    {\mdfsetup{
+        frametitle={
+            \tikz[baseline=(current bounding box.east),outer sep=0pt]
+            \node[anchor=east,rectangle,fill=red!30]
+            {Problema #1};}}
+    }
+    \mdfsetup{
+        innertopmargin=10pt,linecolor=red!30,
+        linewidth=2pt,topline=true,
+        frametitleaboveskip=\dimexpr - \ht\strutbox\relax
+    }
+    \begin{mdframed}
+}{
+    \end{mdframed}
+}
+
+\newenvironment{lem}[1][]{
+\ifstrempty{#1}
+    {}
+    {\mdfsetup{
+        frametitle={
+            \tikz[baseline=(current bounding box.east),outer sep=0pt]
+            \node[anchor=east,rectangle,fill=green!30]
+            {Lema #1};}}
+    }\newcommand{\coNP}{\ensuremath{\mathsf{coNP}}}
+
+    % Commonly-used reductions add semantic clarity
+    \newcommand{\CookReducesTo}{\ensuremath{\leq^P_T}}
+    \newcommand{\KarpReducesTo}{\ensuremath{\leq^P_m}}
+    \mdfsetup{
+        innertopmargin=10pt,linecolor=green!30,
+        linewidth=2pt,topline=true,
+        frametitleaboveskip=\dimexpr - \ht\strutbox\relax
+    }
+    \begin{mdframed}
+}{
+    \end{mdframed}
+}
+%-------%
+% FONTS %
+%-------%
+
+% Skip lines and don't indent
+\setlength{\parindent}{0em}
+\setlength{\parskip}{1em}
+
+% Import math fonts and symbols
+\RequirePackage{amsfonts}
+\RequirePackage{amsmath,amsthm,amssymb}
+
+% Palatino typeface -- includes (old-style) text figures
+\RequirePackage[osf]{mathpazo}
+
+% Hipervínculos
+\hypersetup{
+    colorlinks=true,
+    linkcolor=RobRed,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdfauthor={R. Vasquez},
+    pdftitle={Tarea 3},
+    citecolor=RobRed
+}
+
+
+
+% ---------- %
+% PARAMETERS %
+% ---------- %
+\newcommand\course{IA \& TC}
+\newcommand\coursetitle{Tarea 3}
+\newcommand\prof{Jesús Rodríguez Viorato}
+\newcommand\semester{Agosto-Diciembre 2021}
+\newcommand\name{Roberto Vásquez Martínez}
+
+% -------- %
+% DOCUMENT %
+% -------- %
+\tikzset{node distance=2.0cm, % Minimum distance between two nodes. Change if necessary.
+every state/.style={ % Sets the properties for each state
+scale=0.65,
+semithick,
+fill=gray!10},
+initial text={}, % No label on start arrow
+double distance=2pt, % Adjust appearance of accept states
+every edge/.style={ % Sets the properties for each transition
+draw,
+->,>=stealth, % Makes edges directed with bold arrowheads
+auto,
+semithick}}
+\begin{document}
+\begin{titlepage}
+    \centering
+    \vspace*{\fill}
+    \textsc{\LARGE{\coursetitle}}\\[0.3cm]
+    \textsc{\Large{Profesor: \prof}}\\[0.3cm]
+    \textsc{\large{\course}}\\[0.3cm]
+    \textsc{\large{\semester}}\\
+    \vspace*{\fill}
+    \textsc{\name}
+\end{titlepage}
+\pagebreak
+\setcounter{page}{1}
+
+\pagestyle{fancy}
+
+%%%%%%%%%%%%%%
+% Problema 1 %
+%%%%%%%%%%%%%%
+\begin{question}[1]
+Usa el método visto en clase para convertir los siguientes autómatas finitos en expresiones regulares.
+\end{question}
+
+\Proof 
+El método visto en clase fue el método de reducción de estados. Denotaremos por $S$ y $F$ al estado inicial y final del GFNA que construimos a partir del DFA dado. 
+
+Lo que haremos por simplicidad es ir definiendo en cada paso la función de transición $\delta$ del GFNA considerando la eliminación del estado especificado. Al quedar con sólo dos estados especificaremos la expresión regular correspondiente al DFA.
+
+\begin{itemize}
+    \item [\colemph{a)}] Primero procederemos a la eliminación del estado $1$, entonces la función transición $\delta$ considerando esta eliminación es
+    \[
+        \begin{split}
+            \delta(S,2)=&a^*b\\ 
+            \delta(2,2)=&a\cup ba^*b\\ 
+            \delta(2,F)=&\varepsilon,
+        \end{split}
+    \]
+    y las transiciones no especificadas que completan al GFNA son $\emptyset$.
+
+    Ahora eliminando al estado $2$ obtenemos el GFNA con estados $S$ y $F$, y la expresión regular correspondiente al autómata DFA original es 
+    \[
+        \delta(S,F)=a^*b(a\cup ba^*b)^*,  
+    \]
+        que es lo que queríamos hallar.
+
+    \item [\colemph{b)}] De la misma forma que en el inciso anterior consideremos el GFNA con los estados inicial $S$ y final $F$ equivalente al DFA proporcionado. 
+    
+    En primer lugar, eliminamos el estado $1$, las transiciones en este caso serían 
+    \begin{align*}
+        \delta(S,2)=&a\cup b\\ 
+        \delta(S,F)=&\varepsilon\\ 
+        \delta(2,2)=& a\\ 
+        \delta(2,3)=& b\\ 
+        \delta(3,2)=& b\cup a(a\cup b)\\ 
+        \delta(3,F)=&a\cup\varepsilon,
+    \end{align*}
+
+    las que completan el GNFA son $\emptyset$.
+
+    Ahora eliminando el estado $2$ tenemos que 
+    \begin{align*}
+        \delta(S,3)=&(a\cup b)a^*b\\ 
+        \delta(S,F)=&\varepsilon\\ 
+        \delta(3,3)=&(b\cup a(a\cup b))a^*b\\ 
+        \delta(3,F)=&a\cup\varepsilon.
+    \end{align*}
+
+    Finalmente, de eliminar el estado $3$ se tiene que la expresión correspondiente al DFA original es
+    \[
+        \delta(S,F)=\cbr{(a\cup b)a^*b[(b\cup a(a\cup b))a^*b]^*(a\cup \varepsilon)}\cup \varepsilon,
+    \]
+    que es lo que queríamos hallar. \qed
+\end{itemize}
+
+\clearpage
+%%%%%%%%%%%%%%
+% Problema 2 %
+%%%%%%%%%%%%%%
+\begin{question}[2]
+    Convierte las siguientes expresiones regulares en autómatas finitos no deterministas usando el método visto en clase. Para todos los casos usa $\Sigma=\cbr{a,b}$.
+    \begin{itemize}
+        \item [\emph{A)}] $a(abb)^*\cup b$
+        \item [\emph{B)}] $a^+\cup (ab)^+$
+        \item [\emph{C)}] $(a\cup b^+)a^+b^+$
+    \end{itemize}
+\end{question}
+
+\Proof 
+\begin{itemize}
+    \item[\colemph{A)}]
+    Utilizando el algoritmo para de concatenamiento y la operación estrella para autómatas no deterministas se tiene que 
+    \begin{figure}[h!]
+        \centering 
+        \begin{tikzpicture}
+            \node[state, initial] (1) {$ $};
+            \node[state, accepting, right of=1] (2) {$ $};
+            \node[state, right of=2] (3) {$ $};
+            \node[state, right of=3] (4) {$ $};
+            \node[state, right of=4] (5) {$ $};
+            \node[state, accepting, right of=5] (6) {$ $};
+            
+            \draw (1) edge[above] node{a} (2)
+                  (2) edge[above] node{$\varepsilon$} (3)
+                  (3) edge[above] node{a} (4)
+                  (4) edge[above] node{b} (5)
+                  (5) edge[above] node{b} (6)
+
+                  (6) edge[bend left,below] node{$\varepsilon$} (3);
+        \end{tikzpicture}
+        \caption{Autómata correspondiente a la expresión regular $a(abb)^*$}
+    \end{figure}
+    
+    Uniendo con la expresión regular $b$ se tiene que el autómata no determinista deseado es 
+    \begin{figure}[h!]
+        \centering 
+        \begin{tikzpicture}
+            \node [state,initial] (0) at (0,0) {$ $};
+
+            \node[state] (1) at (0.5,1) {$ $};
+            \node[state, accepting, right of=1] (2) {$ $};
+            \node[state, right of=2] (3) {$ $};
+            \node[state, right of=3] (4) {$ $};
+            \node[state, right of=4] (5) {$ $};
+            \node[state, accepting, right of=5] (6) {$ $};
+            
+            \node[state] (7) at (0.5,-1) {$ $};
+            \node[state, accepting,right of=7] (8) {$ $}; 
+
+            \draw 
+                  (0) edge[left] node{$\varepsilon$} (1)
+                  (0) edge[right] node{$\varepsilon$} (7) 
+                  (1) edge[above] node{a} (2)
+                  (2) edge[above] node{$\varepsilon$} (3)
+                  (3) edge[above] node{a} (4)
+                  (4) edge[above] node{b} (5)
+                  (5) edge[above] node{b} (6)
+                  (6) edge[bend left,below] node{$\varepsilon$} (3)
+                  (7) edge[above] node{b} (8);
+        \end{tikzpicture}
+        \caption{Autómata correspondiente a la expresión regular $a(abb)^*\cup b$}
+    \end{figure}
+    \clearpage
+
+    \item[\colemph{B)}] Recordamos que 
+    
+    \[
+        a^+=aa^*\y (ab)^+=(ab)ab^*
+    \]
+
+    Primero obteniendo los autómata con la operación estrella, luego concatenando con la expresión regular correspondiente y al final haciendo la unión construimos el siguiente autómata
+    \begin{figure}[!ht]
+        \centering 
+        \begin{tikzpicture}
+            \node [state,initial] (0) at (0,0) {$ $};
+            \node[state] (1) at (0.5,1) {$ $};
+            \node[state, accepting, right of=1] (2) {$ $};
+            \node[state, right of=2] (3) {$ $};
+            \node[state, accepting, right of=3] (4) {$ $};
+            \node[state] (5) at (0.5,-1) {$ $};
+            \node[state,right of=5] (6) {$ $};
+            \node[state,accepting,right of=6] (7) {$ $};
+            \node[state,right of=7] (8) {$ $};
+            \node[state,right of=8] (9) {$ $};
+            \node[state,accepting,right of=9] (10) {$ $}; 
+            \draw 
+                  (0) edge[left] node{$\varepsilon$} (1)
+                  (0) edge[right] node{$\varepsilon$} (5) 
+                  (1) edge[above] node{a} (2)
+                  (2) edge[above] node{$\varepsilon$} (3)
+                  (3) edge[above] node{a} (4)
+                  (4) edge[bend left, below] node{$\varepsilon$} (3)
+
+                  (5) edge[above] node{a} (6)
+                  (6) edge[above] node{b} (7)
+                  (7) edge[above] node{$\varepsilon$} (8)
+                  (8) edge[above] node{a} (9)
+                  (9) edge[above] node{b} (10)
+                  (10) edge[bend left,below] node{$\varepsilon$} (8);
+        \end{tikzpicture}
+        \caption{Autómata correspondiente a la expresión regular $a^+\cup (ab)^+$}
+    \end{figure}
+     y este es el diagrama buscado.
+
+    \item [\colemph{C)}] Primero obtendremos $a\cup b^+$ y $a^+b^+$. 
+    
+    El primer autómata correspondiente a la expresión regular $a\cup b^+$ es 
+    \begin{figure}[!ht]
+        \centering 
+        \begin{tikzpicture}
+            \node [state,initial] (0) at (0,0) {$ $};
+            \node[state] (1) at (0.5,1) {$ $};
+            \node[state, accepting, right of=1] (2) {$ $};
+            
+            \node[state] (3) at (0.5,-1) {$ $};
+            \node[state, accepting,right of=3] (4) {$ $};
+            \node[state,right of=4] (5) {$ $};
+            \node[state,accepting,right of=5] (6) {$ $};
+            \draw 
+                  (0) edge[left] node{$\varepsilon$} (1)
+                  (0) edge[right] node{$\varepsilon$} (3) 
+
+                  (1) edge[above] node{a} (2)
+
+                  (3) edge[above] node{b} (4)
+                  (4) edge[above] node{$\varepsilon$} (5)
+                  (5) edge[above] node{b} (6)
+                  (6) edge[bend left,below] node{$\varepsilon$} (5);
+        \end{tikzpicture}
+        \caption{Autómata correspondiente a la expresión regular $a\cup b^+$}
+        \label{fig:C1}
+    \end{figure}
+
+    Por otro lado, obteniendo los autómatas correspondientes a $a^+$ y $b^+$ y luego concatenando se tiene que el autómata correspondiente a la expresión regular $a^+b^+$ es
+    \begin{figure}[!ht]
+        \centering 
+        \begin{tikzpicture}
+            \node [state,initial] (1) {$ $};
+            \node[state,right of= 1] (2) {$ $};
+            \node[state,right of= 2] (3) {$ $};
+            \node[state,right of= 3] (4) {$ $};
+            \node[state,right of= 4] (5) {$ $};
+            \node[state,accepting,right of= 5] (6) {$ $};
+            \node[state,right of= 6] (7) {$ $};
+            \node[state,accepting,right of= 7] (8) {$ $};
+            \draw 
+                  (1) edge[above] node{a} (2)
+                  (2) edge[above] node{$\varepsilon$} (3)
+                  (3) edge[above] node{a} (4)
+                  (4) edge[above] node{$\varepsilon$} (5)
+                  (5) edge[above] node{b} (6)
+                  (6) edge[above] node{$\varepsilon$} (7)
+                  (7) edge[above] node{b} (8)
+                  (4) edge[bend left,below] node{$\varepsilon$} (3)
+                  (8) edge[bend left,below] node{$\varepsilon$} (7)
+                  (2) edge[bend left,above] node{$\varepsilon$} (5);
+        \end{tikzpicture}
+        \caption{Autómata correspondiente a la expresión regular $a^+b^+$}
+        \label{fig:C2}
+    \end{figure}
+
+    Finalmente se obtiene el NFA correspondiente a $(a\cup b^+)a^+b^+$ concatenando los NFA representados en las figuras \ref{fig:C1} y \ref{fig:C2}. 
+    \clearpage
+
+    El diagrama del NFA final que equivale a la expresión regular $(a\cup b^+)a^+b^+$ es
+    \begin{figure}[!ht]
+        \centering
+        \begin{tikzpicture}
+            \node [state,initial] (0) at (0,0) {$ $};
+            \node[state] (1) at (0.5,1) {$ $};
+            \node[state, right of=1] (2) {$ $};
+            
+            \node[state] (3) at (0.5,-1) {$ $};
+            \node[state,right of=3] (4) {$ $};
+            \node[state,right of=4] (5) {$ $};
+            \node[state,right of=5] (6) {$ $};
+
+            \node [state] (7) at (6,0) {$ $};
+            \node[state,right of= 7] (8) {$ $};
+            \node[state,right of= 8] (9) {$ $};
+            \node[state,right of= 9] (10) {$ $};
+            \node[state,right of= 10] (11) {$ $};
+            \node[state,accepting,right of= 11] (12) {$ $};
+            \node[state,right of= 12] (13) {$ $};
+            \node[state,accepting,right of= 13] (14) {$ $};
+
+            \draw 
+                  (0) edge[left] node{$\varepsilon$} (1) % primer automata
+                  (0) edge[right] node{$\varepsilon$} (3) 
+                  (1) edge[above] node{a} (2)
+                  (3) edge[above] node{b} (4)
+                  (4) edge[above] node{$\varepsilon$} (5)
+                  (5) edge[above] node{b} (6)
+                  (6) edge[bend left,below] node{$\varepsilon$} (5)
+
+                  (2) edge[bend left, above] node{$\varepsilon$} (7) % concatenacion
+                  (4) edge[bend left,above] node{$\varepsilon$} (7)
+                  (6) edge[below] node{$\varepsilon$} (7)
+
+                  (7) edge[above] node{a} (8) % segundo automata 
+                  (8) edge[above] node{$\varepsilon$} (9)
+                  (9) edge[above] node{$a$} (10)
+                  (10) edge[above] node{$\varepsilon$} (11)
+                  (11) edge[above] node{b} (12)
+                  (12) edge[above] node{$\varepsilon$} (13)
+                  (13) edge[above] node{b} (14)
+                  (10) edge[bend left,below] node{$\varepsilon$} (9)
+                  (14) edge[bend left,below] node{$\varepsilon$} (13)
+                  (8) edge[bend left,above] node{$\varepsilon$} (11); 
+        \end{tikzpicture}
+        \caption{Autómata correspondiente a la expresión regular $(a\cup b^+)a^+b^+$}
+    \end{figure}
+
+    que es lo que estábamos buscando. \qed
+
+
+\end{itemize}
+
+\clearpage
+%%%%%%%%%%%%%%
+% Problema 3 %
+%%%%%%%%%%%%%%
+\begin{question}[3]
+    En cierto lenguaje de programación, los comentarios aparecen deliminatos entre $I\#$ y $\#I$. Sea $C$ el lenguaje de todos los comentarios delimitados válidos. Un elemento de $C$ debe empezar en $I\#$ y terminar con $\#I$ pero en medio no debe intervenir ningún $\#I$. Por simplicidad, asume que el alfabeto de $C$ es $\Sigma=\cbr{a,b,I,\#}$.
+    \begin{itemize}
+        \item [\emph{A)}] Da un autómata finito no determinista que reconozca $C$.
+        \item [\emph{B)}] Da una expresión regular que genere $C$.
+    \end{itemize}
+\end{question}
+
+\Proof 
+
+\begin{itemize}
+    \item [\colemph{A)}]El autómata propuesto que reconoce el lenguaje de todos los comentarios válidos $C$ es 
+    \begin{figure}[!ht]
+        \centering
+        \begin{tikzpicture}
+            \node [state,initial] (1) {$1$};
+            \node[state,right of= 1] (2) {$2$};
+            \node[state,right of= 2] (3) {$3$};
+            \node[state,right of= 3, xshift=2cm] (4) {$4$};
+            \node[state,right of= 4, xshift=1cm] (5) {$5$};
+            \node[state,accepting,right of= 5] (6) {$6$};
+            \draw 
+                  (1) edge[above] node{$I$} (2) % caminos directos
+                  (2) edge[above] node{$\#$} (3)
+                  (3) edge[above] node{$a,b,I,\varepsilon$} (4)
+                  (4) edge[above] node{$\#$} (5)
+                  (5) edge[above] node{$I$} (6)
+                  
+                  (4) edge[bend left,below] node{$\varepsilon$} (3) % bucles
+                  (5) edge[loop below] node{$\#$} (5)
+                  (5) edge[bend right,above] node{$a,b$} (3);
+        \end{tikzpicture}
+        \caption{Autómata propuesto que reconoce el lenguaje $C$}
+        \label{fig: NFA-Comentarios}
+    \end{figure}
+
+    Veamos que el autómata descrito en la figura \ref{fig: NFA-Comentarios} reconoce a $C$. 
+    
+    En primer lugar, las transiciones por los estados $1$ y $2$ aseguran que la cadena aceptada por el autómata iniciará con $I\#$ lo que es necesario para todos los elementos en $C$. 
+
+    En segundo lugar, la relación entre los estados $3$ y $4$ permite leer cualquier cadena constituida por $a,b,I$ e incluso la cadena vacía $\varepsilon$. Dada cualquier cadena (incluyendo la vacía) conformada por los caracteres $a,b,I$ se puede pasar al estado $5$ si se lee un $\#$, y el bucle en ese estado permite insertar una cantidad arbitraria de caracteres $\#$. 
+
+    Estando en $5$ se puede leer también después de un caracter $\#$ otra cadena formada por $a,b,I,\varepsilon$, sin embargo si se lee un $I$ necesariamente se debe terminar la cadena y ser aceptada lo que se consigue en la transición al estado $6$, en otro caso se debe leer un caracter $a$ o $b$ por lo que se regresaría al estado $3$ y de nueva cuenta se puede leer una cadena formada por $a,b,I$ o incluso $\varepsilon$.
+
+    Con estos razonamientos concluimos que el autómata representado en la figura \ref{fig: NFA-Comentarios} reconoce al lenguaje $C$.
+
+    \item [\colemph{B)}] A través del autómata no determinístico anterior construimos el equivalente GNFA, ya no es necesario agregar estado inicial y final pues el autómata representado en la figura \ref{fig: NFA-Comentarios} sólo tine un estado inicial y final que son $1$ y $6$, además estos estados cumplen las condiciones de un GNFA.
+    
+    Procederemos a obtener la expresión regular a través de eliminación de estados. Consideremos la expresión regular $R=a\cup b\cup I\cup\varepsilon$.
+
+    De la misma manera que en el \colemph{Problema 1}, eliminando el estado $2$ se tienen las siguientes transiciones
+    \begin{align*}
+        \delta(1,3)=&I\#\\ 
+        \delta(3,4)=&R\\ 
+        \delta(4,5)=&\#\\ 
+        \delta(5,5)=&\#\\ 
+        \delta(5,6)=&I\\ 
+        \delta(4,3)=&\varepsilon\\ 
+        \delta(5,3)=&a\cup b,
+    \end{align*}
+
+    y las demás transiciones que completan el GNFA son $\emptyset$.
+
+    Ahora eliminando el estado $3$ se tienen las siguientes transiciones
+    \begin{align*}
+        \delta(1,4)=&I\#R\\ 
+        \delta(4,4)=&R\\ 
+        \delta(4,5)=&\#\\ 
+        \delta(5,4)=&(a\cup b)R\\ 
+        \delta(5,5)=&\#\\ 
+        \delta(5,6)=& I.
+    \end{align*}
+
+    Posteriormente, eliminando el estado $4$ se tienen las siguientes transiciones
+    \begin{align*}
+        \delta(1,5)=&I\# R^+\#\\ 
+        \delta(5,5)=&(a\cup b)R^+\#\cup \#\\ 
+        \delta(5,6)=& I.
+    \end{align*}
+
+    Finalmente, eliminando el estado $5$ obtenemos la expresión regular correspondiente al autómata en la figura \ref{fig: NFA-Comentarios} la cual es 
+    \[
+        \delta(1,6)=I\#R^+\#[(a\cup b)R^+\#\cup \#]^* I,  
+    \]
+    que es lo que queríamos hallar. \qed
+\end{itemize}
+\end{document}
+
+
